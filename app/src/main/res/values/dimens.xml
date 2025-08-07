@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="primary_text_size">22sp</dimen>
+    <dimen name="lower_text_size">16sp</dimen>
+    <dimen name="corner">16dp</dimen>
+    <dimen name="pad16">16dp</dimen>
+    <dimen name="pad8">8dp</dimen>
+    <dimen name="pad6">6dp</dimen>
+    <dimen name="size20">20dp</dimen>
+</resources>
