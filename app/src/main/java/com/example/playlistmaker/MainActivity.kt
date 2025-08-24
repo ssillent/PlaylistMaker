@@ -29,11 +29,13 @@ class MainActivity : AppCompatActivity() {
 
         buttonMediateka.setOnClickListener{
             val displayIntent = Intent(this, Mediateka::class.java)
+
             startActivity(displayIntent)
         }
 
         buttonSettings.setOnClickListener{
             val displayIntent = Intent(this, Settings::class.java)
+
             startActivity(displayIntent)
         }
 
