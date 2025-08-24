@@ -1,21 +1,14 @@
 package com.example.playlistmaker
 
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
-import android.widget.LinearLayout
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 
 class Search : AppCompatActivity() {
 
@@ -25,8 +18,6 @@ class Search : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
-        val buttonMediateka = findViewById<LinearLayout>(R.id.MediatekaSearchBottomNavigation)
-        val buttonSettings = findViewById<LinearLayout>(R.id.SettingsSearchBottomNavigation)
         searchEditText = findViewById<EditText>(R.id.SearchEditText)
         val clearButton = findViewById<ImageView>(R.id.clearButton)
         val searchButtonBack = findViewById<ImageView>(R.id.SearchBackButton)
@@ -60,17 +51,6 @@ class Search : AppCompatActivity() {
         }
         searchEditText.addTextChangedListener(simpleTextWatcher)
 
-        buttonMediateka.setOnClickListener{
-            val displayIntent = Intent(this, Mediateka::class.java)
-
-            startActivity(displayIntent)
-        }
-
-        buttonSettings.setOnClickListener{
-            val displayIntent = Intent(this, Settings::class.java)
-
-            startActivity(displayIntent)
-        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -93,8 +73,8 @@ class Search : AppCompatActivity() {
     }
 
     companion object {
-        const val SEARCH_TEXT_KEY = "search_text_key"
-        const val DEFAULT_TEXT = ""
+        private const val SEARCH_TEXT_KEY = "search_text_key"
+        private const val DEFAULT_TEXT = ""
     }
 
 

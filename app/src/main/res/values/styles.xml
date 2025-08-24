@@ -76,8 +76,8 @@
 
     <style name="ButtonBack">
         <item name="tint">@color/black</item>
-        <item name="android:layout_width">20dp</item>
-        <item name="android:layout_height">20dp</item>
+        <item name="android:layout_width">16dp</item>
+        <item name="android:layout_height">16dp</item>
         <item name="android:src">@drawable/vector7</item>
     </style>
 
@@ -93,7 +93,7 @@
         <item name="android:drawableTint">@color/Gray</item>
         <item name="android:textSize">@dimen/lower_text_size</item>
         <item name="android:fontFamily">@font/ys_display_regular</item>
-        <item name="android:textFontWeight">500</item>
+        <item name="android:textFontWeight">400</item>
         <item name="android:background">@drawable/edittext_rounded_corners</item>
         <item name="android:paddingHorizontal">13dp</item>
         <item name="android:imeOptions">actionSearch</item>
@@ -129,7 +129,7 @@
         <item name="android:layout_width">12dp</item>
         <item name="android:layout_height">12dp</item>
         <item name="android:layout_gravity">end|center_vertical</item>
-        <item name="android:layout_marginEnd">13dp</item>
+        <item name="android:layout_marginEnd">12dp</item>
         <item name="android:src">@drawable/clear_text</item>
         <item name="tint">@color/Gray</item>
         <item name="android:visibility">gone</item>
