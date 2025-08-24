@@ -56,7 +56,7 @@ class Search : AppCompatActivity() {
 
                 searchText = s?.toString() ?: ""
             }
-            override fun afterTextChanged(s: Editable?) {}
+            override fun afterTextChanged(s: Editable?) { }
         }
         searchEditText.addTextChangedListener(simpleTextWatcher)
 
