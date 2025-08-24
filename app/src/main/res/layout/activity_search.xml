@@ -1,10 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout  xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".search">
+    style="@style/DefaultLayout"
+    >
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <LinearLayout
+        style="@style/DefaultLayout"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:paddingHorizontal="@dimen/pad16">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp">
+
+            <ImageView
+                android:id="@+id/SearchBackButton"
+                style="@style/ButtonBack"
+                android:layout_marginEnd="28dp"
+                android:layout_marginTop="10dp" />
+ />
+        <TextView
+            style="@style/PrimaryTextBlack"
+            android:text="@string/search"
+            android:layout_marginBottom="@dimen/pad16"
+            android:layout_marginTop="4dp"
+            />
+
+        </LinearLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="36dp">
+        <EditText
+            android:id="@+id/SearchEditText"
+            style="@style/SearchEditText"
+            />
+
+            <ImageView
+                android:id="@+id/clearButton"
+                style="@style/ClearTextButton" />
+        </FrameLayout>
+    </LinearLayout>
+
+    </LinearLayout>
