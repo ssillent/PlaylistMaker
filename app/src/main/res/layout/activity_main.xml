@@ -1,83 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/Maincolor"
-    android:orientation="vertical">
+    style="@style/MainLayout">
 
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        style="@style/PrimaryText"
         android:text="@string/app_name"
-        android:textSize="@dimen/primary_text_size"
-        android:textColor="@color/white"
         android:paddingLeft="12dp"
         android:paddingTop="10dp"
-        android:textStyle="bold"
         />
+
     <LinearLayout
-        android:layout_height="match_parent"
         android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_marginTop="40dp"
         android:orientation="vertical"
-        android:paddingLeft="@dimen/pad16"
-        android:paddingRight="@dimen/pad16"
-        android:paddingBottom="28dp"
-        >
+        android:paddingHorizontal="@dimen/pad16"
+        android:paddingBottom="12dp">
 
         <Button
             android:id="@+id/search"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginBottom="@dimen/pad16"
-            android:layout_weight="1"
-            android:backgroundTint="@color/white"
+            style="@style/MainButtonStyle"
             android:text="@string/search"
-            android:textColor="#1A1B22"
-            android:textStyle="bold"
-            android:textSize="@dimen/primary_text_size"
-            app:icon="@drawable/vector2"
-            app:iconTint="@color/black"
-            app:iconGravity="textStart"
-            app:cornerRadius="@dimen/corner"
-            app:iconPadding="@dimen/pad8"
-            />
+            app:icon="@drawable/vector2" />
 
 
         <Button
             android:id="@+id/mediateka"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginBottom="@dimen/pad16"
-            android:layout_weight="1"
+            style="@style/MainButtonStyle"
             android:text="@string/mediateka"
-            android:backgroundTint="@color/white"
-            android:textColor="#1A1B22"
-            android:textStyle="bold"
-            android:textSize="@dimen/primary_text_size"
-            app:icon="@drawable/vector"
-            app:iconTint="@color/black"
-            app:iconGravity="textStart"
-            app:cornerRadius="@dimen/corner"
-            app:iconPadding="@dimen/pad8"
-            />
+            app:icon="@drawable/vector" />
+
         <Button
             android:id="@+id/settings"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+            style="@style/MainButtonStyle"
             android:text="@string/settings"
-            android:backgroundTint="@color/white"
-            android:textColor="@color/black"
-            android:textStyle="bold"
-            android:textSize="@dimen/primary_text_size"
-            app:icon="@drawable/vector3"
-            app:iconTint="#1A1B22"
-            app:iconGravity="textStart"
-            app:cornerRadius="@dimen/corner"
-            app:iconPadding="@dimen/pad8"
-            />
+            app:icon="@drawable/vector3" />
 
     </LinearLayout>
 </LinearLayout>
