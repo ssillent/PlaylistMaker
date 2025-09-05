@@ -7,4 +7,5 @@
     <dimen name="pad8">8dp</dimen>
     <dimen name="pad6">6dp</dimen>
     <dimen name="size20">20dp</dimen>
+    <dimen name="track_icon_size">45dp</dimen>
 </resources>
