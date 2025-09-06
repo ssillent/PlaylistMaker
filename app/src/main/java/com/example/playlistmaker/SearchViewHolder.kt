@@ -21,13 +21,12 @@ class SearchViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
         songName.text = track.trackName
         authorName.text = track.authorName
         trackTime.text = track.trackTime
-        val pxsize = dpToPx(45f, itemView.context)
+        val pxsize = dpToPx(2f, itemView.context)
 
         Glide.with(itemView.context)
             .load(track.artworkUrl100)
-            .transform(RoundedCorners(2))
             .centerCrop()
-            .override(pxsize, pxsize)
+            .transform(RoundedCorners(pxsize))
             .placeholder(R.drawable.placeholder)
             .into(trackIcon)
     }

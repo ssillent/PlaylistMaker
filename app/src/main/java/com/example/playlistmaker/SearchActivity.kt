@@ -19,12 +19,12 @@ class Search : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
-        searchEditText = findViewById<EditText>(R.id.SearchEditText)
+        searchEditText = findViewById(R.id.SearchEditText)
         val clearButton = findViewById<ImageView>(R.id.clearButton)
         val searchButtonBack = findViewById<ImageView>(R.id.SearchBackButton)
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
 
-        val tracks = arrayListOf(
+        val tracks = listOf(
             Track(
                 trackName = getString(R.string.track1name),
                 authorName = getString(R.string.track1singer),
