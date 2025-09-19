@@ -44,13 +44,66 @@
         </FrameLayout>
     </LinearLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
+
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:layout_marginTop="24dp"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+        android:layout_weight="1">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="24dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+
+        <LinearLayout
+            android:id="@+id/NoInternet"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_horizontal"
+            android:visibility="gone"
+            android:orientation="vertical"
+            android:paddingTop="120dp">
+
+            <ImageView
+                style="@style/PlaceholderIcInternetError"/>
+
+            <TextView
+                style="@style/SearchPlaceholderText"
+                android:text="@string/NoConnection"/>
+
+            <TextView
+                style="@style/SearchPlaceholderText"
+                android:text="@string/LoadFailed"/>
+
+            <Button
+                android:id="@+id/updateButton"
+                style="@style/UpdateButton" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/NothingFound"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_horizontal"
+            android:visibility="gone"
+            android:orientation="vertical"
+            android:paddingTop="120dp">
+
+            <ImageView
+                style="@style/PlaceholderIc"/>
+
+            <TextView
+                style="@style/SearchPlaceholderText"
+                android:text="@string/NothingFound" />
+
+
+
+        </LinearLayout>
+
+    </FrameLayout>
 
 
     </LinearLayout>
