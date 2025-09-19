@@ -9,6 +9,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.RecyclerView
 
 class Search : AppCompatActivity() {
 
@@ -18,9 +19,47 @@ class Search : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
-        searchEditText = findViewById<EditText>(R.id.SearchEditText)
+        searchEditText = findViewById(R.id.SearchEditText)
         val clearButton = findViewById<ImageView>(R.id.clearButton)
         val searchButtonBack = findViewById<ImageView>(R.id.SearchBackButton)
+        val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
+
+        val tracks = listOf(
+            Track(
+                trackName = getString(R.string.track1name),
+                authorName = getString(R.string.track1singer),
+                trackTime = getString(R.string.track1time),
+                artworkUrl100 = getString(R.string.track1url)
+            ),
+            Track(
+                trackName = getString(R.string.track2name),
+                authorName = getString(R.string.track2singer),
+                trackTime = getString(R.string.track2time),
+                artworkUrl100 = getString(R.string.track2url)
+            ),
+            Track(
+                trackName = getString(R.string.track3name),
+                authorName = getString(R.string.track3singer),
+                trackTime = getString(R.string.track3time),
+                artworkUrl100 = getString(R.string.track3url)
+            ),
+            Track(
+                trackName = getString(R.string.track4name),
+                authorName = getString(R.string.track4singer),
+                trackTime = getString(R.string.track4time),
+                artworkUrl100 = getString(R.string.track4url)
+            ),
+            Track(
+                trackName = getString(R.string.track5name),
+                authorName = getString(R.string.track5singer),
+                trackTime = getString(R.string.track5time),
+                artworkUrl100 = getString(R.string.track5url)
+            )
+        )
+
+        val searchAdapter = SearchAdapter(tracks)
+        recyclerView.adapter = searchAdapter
+
 
         if (savedInstanceState != null) {
             searchText = savedInstanceState.getString(SEARCH_TEXT_KEY, "")
