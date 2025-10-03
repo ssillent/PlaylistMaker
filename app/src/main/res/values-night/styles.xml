@@ -216,4 +216,25 @@
         <item name="tint">@color/white</item>
     </style>
 
+    <style name="ThemeSwitcher">
+        <item name= "android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="thumbTint">@color/switch_thumb</item>
+        <item name="trackTint">@color/switch_track</item>
+        <item name="switchMinWidth">35dp</item>
+    </style>
+
+    <style name="ClearHistoryButton" parent="Widget.MaterialComponents.Button.UnelevatedButton">
+        <item name= "android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">14sp</item>
+        <item name="cornerRadius">54dp</item>
+        <item name="android:backgroundTint">@color/white</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="android:textFontWeight">500</item>
+        <item name="android:textAllCaps">false</item>
+    </style>
+
+
 </resources>

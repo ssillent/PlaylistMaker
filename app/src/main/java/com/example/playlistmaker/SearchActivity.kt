@@ -24,6 +24,16 @@ class Search : AppCompatActivity() {
     var searchText: String = DEFAULT_TEXT
     lateinit var searchEditText: EditText
 
+    private lateinit var searchHistory: SearchHistory
+    private lateinit var searchHistoryRecyclerView: RecyclerView
+    private lateinit var searchHistoryLayout: LinearLayout
+    private lateinit var clearHistoryButton: Button
+    private lateinit var placeholderNothingFound: LinearLayout
+    private lateinit var placeholderNoInternet: LinearLayout
+    private lateinit var searchAdapter: SearchAdapter
+    private lateinit var historyAdapter: SearchAdapter
+    private val historyTracks = mutableListOf<Track>()
+
     private val retrofit = Retrofit.Builder()
         .baseUrl("https://itunes.apple.com")
         .addConverterFactory(GsonConverterFactory.create())
@@ -38,18 +48,31 @@ class Search : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
+
+        val sharedPreferences = getSharedPreferences("search_history", Context.MODE_PRIVATE)
+
+        searchHistory = SearchHistory(sharedPreferences)
+
         searchEditText = findViewById(R.id.SearchEditText)
         val clearButton = findViewById<ImageView>(R.id.clearButton)
         val searchButtonBack = findViewById<ImageView>(R.id.SearchBackButton)
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
-        val placeholderNothingFound = findViewById<LinearLayout>(R.id.NothingFound)
-        val placeholderNoInternet = findViewById<LinearLayout>(R.id.NoInternet)
+        placeholderNothingFound = findViewById(R.id.NothingFound)
+        placeholderNoInternet = findViewById(R.id.NoInternet)
         val updateButton = findViewById<Button>(R.id.updateButton)
+        searchHistoryLayout = findViewById(R.id.SearchHistory)
+        searchHistoryRecyclerView = findViewById(R.id.searchHistoryRecyclerView)
+        clearHistoryButton = findViewById(R.id.clearHistoryButton)
 
-        val searchAdapter = SearchAdapter(tracks)
+        searchAdapter = SearchAdapter(tracks) { track -> onTrackClicked(track)}
         recyclerView.adapter = searchAdapter
 
+        historyAdapter = SearchAdapter(historyTracks) { track -> onTrackClicked(track)}
+        searchHistoryRecyclerView.adapter = historyAdapter
+
         searchEditText.requestFocus()
+
+        loadSearchHistory()
 
         if (savedInstanceState != null) {
             searchText = savedInstanceState.getString(SEARCH_TEXT_KEY, "")
@@ -61,20 +84,7 @@ class Search : AppCompatActivity() {
             searchEditText.setText(searchText)
         }
 
-        fun showPlaceholderNothingFound() {
-            placeholderNothingFound.visibility = View.VISIBLE
-        }
 
-        fun hidePlaceholderNothingFound() {
-            placeholderNothingFound.visibility = View.GONE
-        }
-        fun showPlaceholderNoInternet() {
-            placeholderNoInternet.visibility = View.VISIBLE
-        }
-
-        fun hidePlaceholderNoInternet() {
-            placeholderNoInternet.visibility = View.GONE
-        }
 
         fun searchTrack(){
             val query = searchEditText.text.toString().trim()
@@ -85,12 +95,13 @@ class Search : AppCompatActivity() {
 
                 hidePlaceholderNoInternet()
                 hidePlaceholderNothingFound()
+                hideSearchHistory()
 
                 ituneService.searchTrack(query).enqueue(object : Callback<TrackResponse>{
 
                     override fun onResponse(call: Call<TrackResponse>, response: Response<TrackResponse>) {
 
-                        if (response.isSuccessful && response.code() == 200) {
+                        if (response.isSuccessful) {
                             val trackResponse = response.body()
 
                             if(trackResponse != null && trackResponse.results.isNotEmpty()){
@@ -152,9 +163,16 @@ class Search : AppCompatActivity() {
 
             hidePlaceholderNoInternet()
             hidePlaceholderNothingFound()
+            hideKeyboard()
 
-            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.hideSoftInputFromWindow(searchEditText.windowToken, 0)
+            showSearchHistory()
+        }
+
+        clearHistoryButton.setOnClickListener{
+            searchHistory.clearHistory()
+            historyTracks.clear()
+            historyAdapter.notifyDataSetChanged()
+            showSearchHistory()
         }
 
         searchEditText.setOnEditorActionListener { _, actionId, _ ->
@@ -173,15 +191,73 @@ class Search : AppCompatActivity() {
                 clearButton.visibility = clearButtonVisibility(s)
 
                 searchText = s?.toString() ?: ""
+
+                if (searchEditText.hasFocus() && s.isNullOrEmpty()) {
+                    showSearchHistory()
+                } else {
+                    hideSearchHistory()
+                }
             }
             override fun afterTextChanged(s: Editable?) {}
         }
         searchEditText.addTextChangedListener(simpleTextWatcher)
 
+        searchEditText.setOnFocusChangeListener{ _, hasFocus ->
+            if (hasFocus && searchEditText.text.isNullOrEmpty()){
+                showSearchHistory()
+            } else{
+                hideSearchHistory()
+            }
+        }
+
 
     }
 
+    fun hideKeyboard(){
+        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(searchEditText.windowToken, 0)
+    }
 
+    private fun onTrackClicked(track: Track){
+        searchHistory.addToHistory(track)
+        loadSearchHistory()
+        hideKeyboard()
+    }
+
+    private fun loadSearchHistory(){
+        historyTracks.clear()
+        historyTracks.addAll(searchHistory.getHistory())
+        historyAdapter.notifyDataSetChanged()
+        showSearchHistory()
+    }
+
+
+    private fun showSearchHistory(){
+        if (historyTracks.isNotEmpty() && searchEditText.text.isNullOrEmpty() && tracks.isEmpty()) {
+            searchHistoryLayout.visibility = View.VISIBLE
+        } else {
+            searchHistoryLayout.visibility = View.GONE
+        }
+    }
+
+    private fun hideSearchHistory(){
+        searchHistoryLayout.visibility = View.GONE
+    }
+
+    private fun showPlaceholderNothingFound() {
+        placeholderNothingFound.visibility = View.VISIBLE
+    }
+
+    private fun hidePlaceholderNothingFound() {
+        placeholderNothingFound.visibility = View.GONE
+    }
+    private fun showPlaceholderNoInternet() {
+        placeholderNoInternet.visibility = View.VISIBLE
+    }
+
+    private fun hidePlaceholderNoInternet() {
+        placeholderNoInternet.visibility = View.GONE
+    }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)

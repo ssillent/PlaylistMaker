@@ -98,8 +98,37 @@
             <TextView
                 style="@style/SearchPlaceholderText"
                 android:text="@string/NothingFound" />
+        </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/SearchHistory"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone"
+            android:layout_marginTop="45dp"
+>
 
+            <TextView
+                style="@style/PrimaryTextBlack"
+                android:text="@string/YouSearch"
+                android:textSize="19sp"
+                android:layout_marginBottom="20dp"
+                android:layout_gravity="center"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/searchHistoryRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:layout_marginBottom="24dp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+            <Button
+                android:id="@+id/clearHistoryButton"
+                style="@style/ClearHistoryButton"
+                android:text="@string/ClearHistory"
+                android:layout_gravity="center"/>
 
         </LinearLayout>
 
