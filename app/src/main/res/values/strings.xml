@@ -16,6 +16,8 @@
     <string name="NoConnection">Проблемы со связью</string>
     <string name="LoadFailed">Загрузка не удалась. Проверьте\nподключение к интернету</string>
     <string name="Update">Обновить</string>
+    <string name="YouSearch">Вы искали</string>
+    <string name="ClearHistory">Очистить историю</string>
 </resources>
 
 
