@@ -5,11 +5,12 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import androidx.core.content.edit
 
+private const val historyKey = "search_history"
+private const val maxHistorySize = 10
+
 class SearchHistory(private val sharedPreferences: SharedPreferences) {
 
     private val gson = Gson()
-    private val historyKey = "search_history"
-    private val maxHistorySize = 10
 
     fun getHistory(): List<Track> {
         val json = sharedPreferences.getString(historyKey, null)
