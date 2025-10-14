@@ -222,6 +222,8 @@ class Search : AppCompatActivity() {
         searchHistory.addToHistory(track)
         loadSearchHistory()
         hideKeyboard()
+
+        startActivity(AudioPlayerActivity.getIntent(this, track))
     }
 
     private fun loadSearchHistory(){
