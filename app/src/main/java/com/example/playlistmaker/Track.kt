@@ -12,7 +12,8 @@ data class Track(
     @SerializedName("collectionName") val collectionName: String?,
     @SerializedName("releaseDate") val releaseDate: String?,
     @SerializedName("primaryGenreName") val primaryGenreName: String,
-    @SerializedName("country") val country: String
+    @SerializedName("country") val country: String,
+    @SerializedName("previewUrl") val previewUrl : String
 
 ) : Serializable{
     fun getUpdatedArtwork() = artworkUrl100.replaceAfterLast('/',"512x512bb.jpg")
