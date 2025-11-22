@@ -1,4 +1,4 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.presentation.ui.search
 
 import android.content.Context
 import android.os.Bundle
@@ -14,8 +14,17 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ProgressBar
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
+import com.example.playlistmaker.Creator
+import com.example.playlistmaker.presentation.ui.audioplayer.AudioPlayerActivity
+import com.example.playlistmaker.R
+import com.example.playlistmaker.data.dto.TrackResponse
+import com.example.playlistmaker.data.network.SongApiService
+import com.example.playlistmaker.domain.api.SearchHistoryInteractor
+import com.example.playlistmaker.domain.api.TrackInteractor
+import com.example.playlistmaker.domain.models.Track
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -27,7 +36,9 @@ class Search : AppCompatActivity() {
     var searchText: String = DEFAULT_TEXT
     lateinit var searchEditText: EditText
 
-    private lateinit var searchHistory: SearchHistory
+
+    private lateinit var searchHistoryInteractor: SearchHistoryInteractor
+    private lateinit var trackInteractor: TrackInteractor
     private lateinit var searchHistoryRecyclerView: RecyclerView
     private lateinit var searchHistoryLayout: LinearLayout
     private lateinit var clearHistoryButton: Button
@@ -44,12 +55,7 @@ class Search : AppCompatActivity() {
 
     private val seacrhRunnable = Runnable { searchTrack() }
 
-    private val retrofit = Retrofit.Builder()
-        .baseUrl("https://itunes.apple.com")
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
 
-    private val ituneService = retrofit.create(SongApiService::class.java)
 
     private val tracks = mutableListOf<Track>()
 
@@ -58,10 +64,11 @@ class Search : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
+        enableEdgeToEdge()
 
-        val sharedPreferences = getSharedPreferences("search_history", Context.MODE_PRIVATE)
+        trackInteractor = Creator.provideTrackInteractor()
+        searchHistoryInteractor = Creator.provideSearchHistoryInteractor(this)
 
-        searchHistory = SearchHistory(sharedPreferences)
 
         searchEditText = findViewById(R.id.SearchEditText)
         val clearButton = findViewById<ImageView>(R.id.clearButton)
@@ -116,20 +123,12 @@ class Search : AppCompatActivity() {
 
         clearButton.setOnClickListener {
             searchEditText.setText("")
-
-            tracks.clear()
-            searchAdapter.notifyDataSetChanged()
-
-            hidePlaceholderNoInternet()
-            hidePlaceholderNothingFound()
             hideKeyboard()
-            hideSearchResult()
 
-            showSearchHistory()
         }
 
         clearHistoryButton.setOnClickListener{
-            searchHistory.clearHistory()
+            searchHistoryInteractor.clearHistory()
             historyTracks.clear()
             historyAdapter.notifyDataSetChanged()
             showSearchHistory()
@@ -151,6 +150,14 @@ class Search : AppCompatActivity() {
                 clearButton.visibility = clearButtonVisibility(s)
 
                 searchText = s?.toString() ?: ""
+
+                if (s.isNullOrEmpty()) {
+                    tracks.clear()
+                    searchAdapter.notifyDataSetChanged()
+                    hidePlaceholderNoInternet()
+                    hidePlaceholderNothingFound()
+                    hideSearchResult()
+                }
 
                 if (searchEditText.hasFocus() && s.isNullOrEmpty()) {
                     showSearchHistory()
@@ -188,49 +195,26 @@ class Search : AppCompatActivity() {
             hideSearchResult()
             showProgressBar()
 
-            ituneService.searchTrack(query).enqueue(object : Callback<TrackResponse>{
+            trackInteractor.searchTrack(query, object : TrackInteractor.TrackConsumer {
 
-                override fun onResponse(call: Call<TrackResponse>, response: Response<TrackResponse>) {
-
+                override fun consume(foundTracks: List<Track>) {
+                handler.post{
                     hideProgressBar()
 
-                    if (response.isSuccessful) {
-                        val trackResponse = response.body()
-
-                        if(trackResponse != null && trackResponse.results.isNotEmpty()){
-                            tracks.clear()
-                            tracks.addAll(trackResponse.results)
-                            searchAdapter.notifyDataSetChanged()
-                            showSearchResult()
-                        }
-                        else {
-                            showPlaceholderNothingFound()
-                            hidePlaceholderNoInternet()
-                            hideSearchResult()
-
-                            tracks.clear()
-                            searchAdapter.notifyDataSetChanged()
-                        }
-                    } else {
-                        showPlaceholderNoInternet()
-                        hidePlaceholderNothingFound()
-                        hideSearchResult()
-                        tracks.clear()
-                        searchAdapter.notifyDataSetChanged()
-                    }
-
-                }
-
-                override fun onFailure(call: Call<TrackResponse>, t: Throwable) {
-                    showPlaceholderNoInternet()
-                    hidePlaceholderNothingFound()
-                    hideProgressBar()
+                if(foundTracks.isNotEmpty()) {
+                    tracks.clear()
+                    tracks.addAll(foundTracks)
+                    searchAdapter.notifyDataSetChanged()
+                    showSearchResult()
+                } else {
+                    showPlaceholderNothingFound()
                     hideSearchResult()
                     tracks.clear()
                     searchAdapter.notifyDataSetChanged()
                 }
-            })
-
+            }
+            }
+        })
         }
     }
 
@@ -255,7 +239,7 @@ class Search : AppCompatActivity() {
 
     private fun onTrackClicked(track: Track){
         if (clickDebounce()) {
-            searchHistory.addToHistory(track)
+            searchHistoryInteractor.addToHistory(track)
             loadSearchHistory()
             hideKeyboard()
 
@@ -265,7 +249,7 @@ class Search : AppCompatActivity() {
 
     private fun loadSearchHistory(){
         historyTracks.clear()
-        historyTracks.addAll(searchHistory.getHistory())
+        historyTracks.addAll(searchHistoryInteractor.getHistory())
         historyAdapter.notifyDataSetChanged()
         showSearchHistory()
     }
@@ -275,6 +259,8 @@ class Search : AppCompatActivity() {
         if (historyTracks.isNotEmpty() && searchEditText.text.isNullOrEmpty() && tracks.isEmpty()) {
             searchHistoryLayout.visibility = View.VISIBLE
             hideSearchResult()
+            hidePlaceholderNothingFound()
+            hidePlaceholderNoInternet()
         } else {
             searchHistoryLayout.visibility = View.GONE
         }

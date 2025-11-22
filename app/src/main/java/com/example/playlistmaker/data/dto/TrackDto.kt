@@ -1,9 +1,8 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.data.dto
 
 import com.google.gson.annotations.SerializedName
-import java.io.Serializable
 
-data class Track(
+class TrackDto(
     @SerializedName("trackName") val trackName: String,
     @SerializedName("artistName") val artistName: String,
     @SerializedName("trackTimeMillis") val trackTimeMillis: Long,
@@ -15,11 +14,5 @@ data class Track(
     @SerializedName("country") val country: String,
     @SerializedName("previewUrl") val previewUrl : String
 
-) : Serializable{
-    fun getUpdatedArtwork() = artworkUrl100.replaceAfterLast('/',"512x512bb.jpg")
-
-    fun getReleaseYear() : String? {
-        return releaseDate?.substring(0, 4)
-    }
+) {
 }
-
