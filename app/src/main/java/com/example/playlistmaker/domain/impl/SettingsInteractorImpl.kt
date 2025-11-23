@@ -13,9 +13,8 @@ class SettingsInteractorImpl (private val repository: SettingsRepository): Setti
         repository.setDarkTheme(enabled)
     }
 
-    override fun toggleTheme() {
-        val current = getDarkTheme()
-        setDarkTheme(!current)
+    override fun applyCurrentTheme() {
+        repository.applyCurrentTheme()
     }
 
 }

@@ -15,29 +15,8 @@ class App : Application() {
 
         settingsInteractor = Creator.provideSettingsInteractor(this)
 
-        setSettingsTheme()
+        settingsInteractor.applyCurrentTheme()
     }
 
-    private fun setSettingsTheme() {
-        val darkThemeEnabled = settingsInteractor.getDarkTheme()
-        AppCompatDelegate.setDefaultNightMode(
-            if (darkThemeEnabled) {
-                AppCompatDelegate.MODE_NIGHT_YES
-            } else {
-                AppCompatDelegate.MODE_NIGHT_NO
-            }
-        )
-    }
 
-    fun switchTheme(darkThemeEnabled: Boolean) {
-
-        settingsInteractor.setDarkTheme(darkThemeEnabled)
-        AppCompatDelegate.setDefaultNightMode(
-            if (darkThemeEnabled) {
-                AppCompatDelegate.MODE_NIGHT_YES
-            } else {
-                AppCompatDelegate.MODE_NIGHT_NO
-            }
-        )
-    }
 }
