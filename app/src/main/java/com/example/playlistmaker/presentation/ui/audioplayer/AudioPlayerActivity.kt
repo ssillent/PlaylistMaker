@@ -1,4 +1,4 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.presentation.ui.audioplayer
 
 import android.content.Context
 import android.content.Intent
@@ -11,9 +11,13 @@ import android.view.View
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.example.playlistmaker.R
+import com.example.playlistmaker.domain.models.Track
+import com.example.playlistmaker.presentation.ui.search.dpToPx
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -66,6 +70,7 @@ class AudioPlayerActivity : AppCompatActivity(){
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_audioplayer)
+        enableEdgeToEdge()
 
         AudioPlayerbackButton = findViewById(R.id.AudioPlayerBackButton)
         trackImage = findViewById(R.id.trackImage)
@@ -103,8 +108,8 @@ class AudioPlayerActivity : AppCompatActivity(){
         if (track != null) {
             trackTitle.text = track.trackName
             artistName.text = track.artistName
-            durationValue.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(Date(track.trackTimeMillis))
-            trackTime.text = SimpleDateFormat("m:ss", Locale.getDefault()).format(Date(track.trackTimeMillis))
+            durationValue.text = track.trackTimeMillis
+            trackTime.text = track.trackTimeMillis
 
             previewUrl = track.previewUrl
 

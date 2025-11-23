@@ -2,8 +2,12 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     style="@style/DefaultLayout"
-    android:paddingHorizontal="@dimen/pad16">
+    android:fitsSystemWindows="true"
+>
 
+    <LinearLayout
+        style="@style/DefaultLayout"
+        android:paddingHorizontal="@dimen/pad16">
 
     <LinearLayout
         style="@style/LinearLayoutSettings">
@@ -97,6 +101,8 @@
             android:layout_height="14dp"
             android:src="@drawable/vector6" />
 
+
+    </LinearLayout>
 
     </LinearLayout>
 
