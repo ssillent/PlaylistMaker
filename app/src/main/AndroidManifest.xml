@@ -5,7 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
-        android:name=".presentation.App"
+        android:name=".ui.App"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -16,16 +16,16 @@
         android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar"
         tools:targetApi="31">
         <activity
-            android:name=".presentation.ui.search.Search"
+            android:name=".ui.search.activity.Search"
             android:exported="false" />
         <activity
-            android:name=".presentation.ui.settings.Settings"
+            android:name=".ui.settings.activity.Settings"
             android:exported="false" />
         <activity
-            android:name=".presentation.ui.mediateka.Mediateka"
+            android:name=".ui.mediateka.activity.Mediateka"
             android:exported="false" />
         <activity
-            android:name=".presentation.ui.main.MainActivity"
+            android:name=".ui.main.activity.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -34,7 +34,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".presentation.ui.audioplayer.AudioPlayerActivity"
+            android:name=".ui.audioplayer.activity.AudioPlayerActivity"
             android:exported="false" />
     </application>
 
