@@ -1,4 +1,4 @@
-package com.example.playlistmaker.data.settings.repository
+package com.example.playlistmaker.domain.settings.repository
 
 import com.example.playlistmaker.domain.settings.model.ThemeSettings
 

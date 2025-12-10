@@ -18,6 +18,7 @@ import com.example.playlistmaker.domain.sharing.impl.SharingInteractorImpl
 import com.example.playlistmaker.domain.sharing.interactor.SharingInteractor
 import com.example.playlistmaker.ui.audioplayer.view_model.AudioPlayerViewModel
 import com.example.playlistmaker.ui.sharing.ExternalNavigator
+import com.google.gson.Gson
 
 object Creator {
 
@@ -35,10 +36,13 @@ object Creator {
             Context.MODE_PRIVATE
         )
 
+        val gson = Gson()
+
         return SearchRepositoryImpl(
             networkClient = networkClient,
             trackMapper = trackMapper,
-            sharedPreferences = sharedPreferences
+            sharedPreferences = sharedPreferences,
+            gson = gson
         )
     }
 

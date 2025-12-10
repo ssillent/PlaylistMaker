@@ -1,6 +1,6 @@
 package com.example.playlistmaker.domain.audioplayer.impl
 
-import com.example.playlistmaker.data.audioplayer.repository.AudioPlayerRepository
+import com.example.playlistmaker.domain.audioplayer.repository.AudioPlayerRepository
 import com.example.playlistmaker.domain.audioplayer.interactor.AudioPlayerInteractor
 
 class AudioPlayerInteractorImpl(

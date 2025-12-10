@@ -18,16 +18,23 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Locale
 
+enum class PlayerState {
+    DEFAULT,
+    PREPARED,
+    PLAYING,
+    PAUSED
+}
+
+data class AudioPlayerState(
+    val playerState: PlayerState = PlayerState.DEFAULT,
+    val progressTime: String = "00:00"
+)
+
 class AudioPlayerViewModel(
     private val interactor: AudioPlayerInteractor
 ) : ViewModel() {
 
     companion object {
-        const val STATE_DEFAULT = 0
-        const val STATE_PREPARED = 1
-        const val STATE_PLAYING = 2
-        const val STATE_PAUSED = 3
-
         fun getFactory(): ViewModelProvider.Factory =
             viewModelFactory {
                 initializer {
@@ -38,43 +45,44 @@ class AudioPlayerViewModel(
             }
     }
 
-    private val _playerState = MutableLiveData(STATE_DEFAULT)
-    val playerState: LiveData<Int> = _playerState
+    private val _state = MutableLiveData(AudioPlayerState())
+    val state: LiveData<AudioPlayerState> = _state
 
-    private val _progressTime = MutableLiveData("00:00")
-    val progressTime: LiveData<String> = _progressTime
 
     private var updateJob: Job? = null
 
     fun preparePlayer(previewUrl: String) {
         (interactor as? AudioPlayerInteractorImpl)
             ?.setOnPreparedListener {
-                _playerState.value = STATE_PREPARED
+                _state.value = _state.value?.copy(playerState = PlayerState.PREPARED)
             }
 
         interactor.preparePlayer(previewUrl)
     }
 
     fun onPlayButtonClicked() {
-        when (_playerState.value) {
-            STATE_PLAYING -> {
+
+        val currentState = _state.value?.playerState ?: return
+
+        when (currentState) {
+            PlayerState.PLAYING -> {
                 interactor.pause()
-                _playerState.value = STATE_PAUSED
+                _state.value = _state.value?.copy(playerState = PlayerState.PAUSED)
                 stopProgressUpdates()
             }
-            STATE_PREPARED, STATE_PAUSED -> {
+            PlayerState.PREPARED, PlayerState.PAUSED -> {
                 interactor.play()
-                _playerState.value = STATE_PLAYING
+                _state.value = _state.value?.copy(playerState = PlayerState.PLAYING)
                 startProgressUpdates()
             }
-            else -> {}
+            PlayerState.DEFAULT -> {}
         }
     }
 
     fun onPause() {
         if (interactor.isPlaying()) {
             interactor.pause()
-            _playerState.value = STATE_PAUSED
+            _state.value = _state.value?.copy(playerState = PlayerState.PAUSED)
             stopProgressUpdates()
         }
     }
@@ -84,10 +92,11 @@ class AudioPlayerViewModel(
         updateJob = viewModelScope.launch {
             while (isActive) {
                 val position = interactor.getCurrentPosition()
-                _progressTime.value = SimpleDateFormat("mm:ss", Locale.getDefault()).format(position)
+                val progressTime = SimpleDateFormat("mm:ss", Locale.getDefault()).format(position)
+                _state.value = _state.value?.copy(progressTime = progressTime)
 
-                if (!interactor.isPlaying() && _playerState.value == STATE_PLAYING) {
-                    _playerState.value = STATE_PAUSED
+                if (!interactor.isPlaying() && _state.value?.playerState == PlayerState.PLAYING) {
+                    _state.value = _state.value?.copy(playerState = PlayerState.PAUSED)
                     break
                 }
 

@@ -1,6 +1,6 @@
 package com.example.playlistmaker.domain.settings.impl
 
-import com.example.playlistmaker.data.settings.repository.SettingsRepository
+import com.example.playlistmaker.domain.settings.repository.SettingsRepository
 import com.example.playlistmaker.domain.settings.interactor.SettingsInteractor
 import com.example.playlistmaker.domain.settings.model.ThemeSettings
 

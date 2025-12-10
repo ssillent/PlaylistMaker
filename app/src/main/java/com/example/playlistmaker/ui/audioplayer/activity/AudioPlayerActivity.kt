@@ -19,6 +19,7 @@ import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.domain.models.Track
 import com.example.playlistmaker.ui.audioplayer.view_model.AudioPlayerViewModel
 import com.example.playlistmaker.ui.search.dpToPx
+import com.example.playlistmaker.ui.audioplayer.view_model.PlayerState
 
 class AudioPlayerActivity : AppCompatActivity() {
 
@@ -91,27 +92,24 @@ class AudioPlayerActivity : AppCompatActivity() {
     }
 
     private fun setupObservers() {
-        viewModel.playerState.observe(this) { state ->
-            updatePlayButton(state)
-        }
-
-        viewModel.progressTime.observe(this) { progress ->
-            trackTime.text = progress
+        viewModel.state.observe(this) { state ->
+            updatePlayButton(state.playerState)
+            trackTime.text = state.progressTime
         }
     }
 
-    private fun updatePlayButton(state: Int) {
+    private fun updatePlayButton(state: PlayerState) {
         when (state) {
-            AudioPlayerViewModel.STATE_DEFAULT -> {
+            PlayerState.DEFAULT -> {
                 audioPlayerPlayButton.isEnabled = false
                 audioPlayerPlayButton.setImageResource(R.drawable.play_button)
             }
-            AudioPlayerViewModel.STATE_PREPARED,
-            AudioPlayerViewModel.STATE_PAUSED -> {
+            PlayerState.PREPARED,
+            PlayerState.PAUSED-> {
                 audioPlayerPlayButton.isEnabled = true
                 audioPlayerPlayButton.setImageResource(R.drawable.play_button)
             }
-            AudioPlayerViewModel.STATE_PLAYING -> {
+            PlayerState.PLAYING -> {
                 audioPlayerPlayButton.isEnabled = true
                 audioPlayerPlayButton.setImageResource(R.drawable.pause)
             }

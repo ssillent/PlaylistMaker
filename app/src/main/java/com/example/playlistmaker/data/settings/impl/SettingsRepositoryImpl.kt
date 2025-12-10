@@ -2,7 +2,7 @@ package com.example.playlistmaker.data.settings.impl
 
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatDelegate
-import com.example.playlistmaker.data.settings.repository.SettingsRepository
+import com.example.playlistmaker.domain.settings.repository.SettingsRepository
 import com.example.playlistmaker.domain.settings.model.ThemeSettings
 
 private const val DARK_THEME_KEY = "dark_theme"

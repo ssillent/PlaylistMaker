@@ -1,4 +1,4 @@
-package com.example.playlistmaker.data.audioplayer.repository
+package com.example.playlistmaker.domain.audioplayer.repository
 
 interface AudioPlayerRepository {
 

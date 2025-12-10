@@ -1,6 +1,6 @@
 package com.example.playlistmaker.domain.search.Impl
 
-import com.example.playlistmaker.data.search.Repository.SearchRepository
+import com.example.playlistmaker.domain.search.Repository.SearchRepository
 import com.example.playlistmaker.domain.models.Track
 import com.example.playlistmaker.domain.search.Interactor.SearchInteractor
 import com.example.playlistmaker.domain.search.model.SearchResult

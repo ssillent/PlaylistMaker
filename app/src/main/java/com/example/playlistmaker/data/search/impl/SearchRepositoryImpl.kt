@@ -6,7 +6,7 @@ import com.example.playlistmaker.data.dto.TrackRequest
 import com.example.playlistmaker.data.dto.TrackResponse
 import com.example.playlistmaker.data.mapper.TrackMapper
 import com.example.playlistmaker.data.network.NetworkClient
-import com.example.playlistmaker.data.search.Repository.SearchRepository
+import com.example.playlistmaker.domain.search.Repository.SearchRepository
 import com.example.playlistmaker.domain.models.Track
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -19,10 +19,10 @@ private const val MAX_HISTORY_SIZE = 10
 class SearchRepositoryImpl(
     private val networkClient: NetworkClient,
     private val trackMapper: TrackMapper,
-    private val sharedPreferences: SharedPreferences
-): SearchRepository{
+    private val sharedPreferences: SharedPreferences,
+    private val gson: Gson
+): SearchRepository {
 
-    private val gson = Gson()
 
     override suspend fun searchTracks(query: String): List<Track> =
         withContext(Dispatchers.IO) {

@@ -3,7 +3,7 @@ package com.example.playlistmaker.data.audioplayer.impl
 import android.media.MediaPlayer
 import android.os.Handler
 import android.os.Looper
-import com.example.playlistmaker.data.audioplayer.repository.AudioPlayerRepository
+import com.example.playlistmaker.domain.audioplayer.repository.AudioPlayerRepository
 import java.io.IOException
 
 class AudioPlayerRepositoryImpl : AudioPlayerRepository {
