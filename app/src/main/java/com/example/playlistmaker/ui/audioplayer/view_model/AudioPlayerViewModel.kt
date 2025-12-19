@@ -7,7 +7,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.domain.audioplayer.impl.AudioPlayerInteractorImpl
 import com.example.playlistmaker.domain.audioplayer.interactor.AudioPlayerInteractor
 import com.example.playlistmaker.ui.App
@@ -34,16 +33,6 @@ class AudioPlayerViewModel(
     private val interactor: AudioPlayerInteractor
 ) : ViewModel() {
 
-    companion object {
-        fun getFactory(): ViewModelProvider.Factory =
-            viewModelFactory {
-                initializer {
-                    this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as App
-                    val interactor = Creator.provideAudioPlayerInteractor()
-                    AudioPlayerViewModel(interactor)
-                }
-            }
-    }
 
     private val _state = MutableLiveData(AudioPlayerState())
     val state: LiveData<AudioPlayerState> = _state

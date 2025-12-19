@@ -1,18 +1,13 @@
 package com.example.playlistmaker.ui.search.view_model
 
-import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
-import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.domain.models.Track
 import com.example.playlistmaker.domain.search.Interactor.SearchInteractor
 import com.example.playlistmaker.domain.search.model.SearchResult
-import com.example.playlistmaker.ui.App
+
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -23,16 +18,6 @@ class SearchViewModel(private val searchInteractor: SearchInteractor): ViewModel
     companion object {
         private const val SEARCH_DEBOUNCE_DELAY = 1000L
 
-        fun getFactory(): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                val application =
-                    this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as App
-
-                val searchInteractor = Creator.provideSearchInteractor(application)
-
-                SearchViewModel(searchInteractor)
-            }
-        }
     }
 
     private val _searchState = MutableLiveData<SearchState>(SearchState.Default)

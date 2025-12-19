@@ -4,22 +4,20 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.view.View
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
-import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.domain.models.Track
 import com.example.playlistmaker.ui.audioplayer.view_model.AudioPlayerViewModel
 import com.example.playlistmaker.ui.search.dpToPx
 import com.example.playlistmaker.ui.audioplayer.view_model.PlayerState
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class AudioPlayerActivity : AppCompatActivity() {
 
@@ -45,9 +43,9 @@ class AudioPlayerActivity : AppCompatActivity() {
     private lateinit var genreValue: TextView
     private lateinit var countryValue: TextView
 
-    private val viewModel: AudioPlayerViewModel by viewModels {
-        AudioPlayerViewModel.getFactory()
-    }
+    private val viewModel by viewModel<AudioPlayerViewModel>()
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_audioplayer)

@@ -13,6 +13,7 @@ constraintlayout = "2.2.1"
 gson = "2.13.2"
 retrofit-version = "3.0.0"
 lifecycle = "2.10.0"
+koin-android = "4.1.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -30,6 +31,7 @@ retrofit-gson-converter = { group = "com.squareup.retrofit2", name = "converter-
 lifecycle-livedata-ktx = { module = "androidx.lifecycle:lifecycle-livedata-ktx", version.ref = "lifecycle" }
 lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
 activity-ktx = { module = "androidx.activity:activity-ktx", version.ref = "activity" }
+koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin-android" }
 
 
 [plugins]

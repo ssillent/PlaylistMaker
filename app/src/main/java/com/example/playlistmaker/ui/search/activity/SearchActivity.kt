@@ -2,8 +2,6 @@ package com.example.playlistmaker.ui.search.activity
 
 import android.content.Context
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
@@ -15,18 +13,17 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.ui.audioplayer.activity.AudioPlayerActivity
 import com.example.playlistmaker.R
 import com.example.playlistmaker.domain.models.Track
 import com.example.playlistmaker.ui.search.SearchAdapter
 import com.example.playlistmaker.ui.search.view_model.SearchState
 import com.example.playlistmaker.ui.search.view_model.SearchViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 class Search : AppCompatActivity() {
@@ -46,9 +43,7 @@ class Search : AppCompatActivity() {
     private lateinit var searchAdapter: SearchAdapter
     private lateinit var historyAdapter: SearchAdapter
 
-    private val viewModel: SearchViewModel by viewModels {
-        SearchViewModel.getFactory()
-    }
+    private val viewModel by viewModel<SearchViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
