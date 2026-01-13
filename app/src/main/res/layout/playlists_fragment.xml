@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    style="@style/ChangeColor">
+
+    <Button
+        android:id="@+id/updateButton"
+        style="@style/UpdateButton"
+        android:text="@string/NewPlaylist"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="24dp"
+        />
+
+    <ImageView
+        style="@style/PlaceholderIc"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="106dp"/>
+    <TextView
+        style="@style/SearchPlaceholderText"
+        android:text="@string/emptyPlaylist"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="242dp"
+        />
+
+</FrameLayout>
