@@ -17,10 +17,6 @@ class FavoritesFragment : Fragment() {
 
     private val viewModel: PlaylistsViewModel by viewModel()
 
-    companion object {
-        fun newInstance() = FavoritesFragment()
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -37,6 +33,10 @@ class FavoritesFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    companion object {
+        fun newInstance() = FavoritesFragment()
     }
 
 }
