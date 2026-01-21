@@ -33,6 +33,7 @@
         <EditText
             android:id="@+id/SearchEditText"
             style="@style/SearchEditText"
+            android:textCursorDrawable="@drawable/custom_cursor"
             />
 
             <ImageView

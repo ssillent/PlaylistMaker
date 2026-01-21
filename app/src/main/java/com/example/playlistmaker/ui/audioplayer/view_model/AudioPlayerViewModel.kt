@@ -3,13 +3,9 @@ package com.example.playlistmaker.ui.audioplayer.view_model
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.playlistmaker.domain.audioplayer.impl.AudioPlayerInteractorImpl
 import com.example.playlistmaker.domain.audioplayer.interactor.AudioPlayerInteractor
-import com.example.playlistmaker.ui.App
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.NonCancellable.isActive
 import kotlinx.coroutines.delay
@@ -41,10 +37,22 @@ class AudioPlayerViewModel(
     private var updateJob: Job? = null
 
     fun preparePlayer(previewUrl: String) {
-        (interactor as? AudioPlayerInteractorImpl)
-            ?.setOnPreparedListener {
-                _state.value = _state.value?.copy(playerState = PlayerState.PREPARED)
+        interactor.setOnPreparedListener {
+            _state.value = _state.value?.copy(
+                playerState = PlayerState.PREPARED,
+                progressTime = "00:00"
+            )
+        }
+
+        interactor.setOnCompletionListener {
+            viewModelScope.launch {
+                stopProgressUpdates()
+                _state.value = _state.value?.copy(
+                    playerState = PlayerState.PREPARED,
+                    progressTime = "00:00"
+                )
             }
+        }
 
         interactor.preparePlayer(previewUrl)
     }

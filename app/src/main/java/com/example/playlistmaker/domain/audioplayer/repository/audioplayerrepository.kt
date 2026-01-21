@@ -4,6 +4,8 @@ interface AudioPlayerRepository {
 
     fun preparePlayer(previewUrl: String, onPrepared: () -> Unit)
 
+    fun setOnCompletionListener(listener: () -> Unit)
+
     fun play()
 
     fun pause()

@@ -1,5 +1,6 @@
 package com.example.playlistmaker.domain.audioplayer.impl
 
+import com.example.playlistmaker.data.audioplayer.impl.AudioPlayerRepositoryImpl
 import com.example.playlistmaker.domain.audioplayer.repository.AudioPlayerRepository
 import com.example.playlistmaker.domain.audioplayer.interactor.AudioPlayerInteractor
 
@@ -9,15 +10,25 @@ class AudioPlayerInteractorImpl(
 
     private var isPrepared = false
     private var onPreparedCallback: (() -> Unit)? = null
+    private var onCompletionCallback: (() -> Unit)? = null
 
     override fun preparePlayer(previewUrl: String) {
+
+        repository.setOnCompletionListener {
+            onCompletionCallback?.invoke()
+        }
+
         repository.preparePlayer(previewUrl) {
             isPrepared = true
             onPreparedCallback?.invoke()
         }
     }
 
-    fun setOnPreparedListener(listener: () -> Unit) {
+    override fun setOnCompletionListener(listener: () -> Unit) {
+        onCompletionCallback = listener
+    }
+
+    override fun setOnPreparedListener(listener: () -> Unit) {
         onPreparedCallback = listener
     }
 
