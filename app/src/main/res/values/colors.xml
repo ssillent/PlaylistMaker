@@ -10,6 +10,9 @@
     <color name="Switchertrack_off">#E6E8EB</color>
     <color name="Switcher_on">#3772E7</color>
     <color name="Switchertrack_on">#9FBBF3</color>
+    <color name="BottomNavigationIconAndTextColor">#1A1B22</color>
+    <color name="PrimeBottomNavigationIconAndTextColor">#3772E7</color>
+    <color name="BackGroundColorBottomNavigation">#FFFFFFFF</color>
 
 </resources>
 

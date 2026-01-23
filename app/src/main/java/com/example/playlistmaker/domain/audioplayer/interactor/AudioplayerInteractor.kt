@@ -4,6 +4,10 @@ interface AudioPlayerInteractor {
 
     fun preparePlayer(previewUrl: String)
 
+    fun setOnCompletionListener(listener: () -> Unit)
+
+    fun setOnPreparedListener(listener: () -> Unit)
+
     fun play()
 
     fun pause()

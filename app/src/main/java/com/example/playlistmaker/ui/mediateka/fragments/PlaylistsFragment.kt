@@ -16,9 +16,6 @@ class PlaylistsFragment : Fragment() {
 
     private val viewModel: PlaylistsViewModel by viewModel()
 
-    companion object {
-        fun newInstance() = PlaylistsFragment()
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -36,6 +33,10 @@ class PlaylistsFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    companion object {
+        fun newInstance() = PlaylistsFragment()
     }
 
 }

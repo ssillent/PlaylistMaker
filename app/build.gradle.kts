@@ -41,6 +41,8 @@ android {
 
 dependencies {
 
+    implementation (libs.navigation.fragment.ktx)
+    implementation(libs.navigation.ui.ktx)
     implementation(libs.androidx.fragment.ktx)
     implementation(libs.androidx.viewpager2)
     implementation(libs.koin.android)

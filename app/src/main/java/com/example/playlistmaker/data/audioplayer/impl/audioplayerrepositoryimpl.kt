@@ -11,6 +11,8 @@ class AudioPlayerRepositoryImpl : AudioPlayerRepository {
     private var mediaPlayer: MediaPlayer? = null
     private val mainHandler = Handler(Looper.getMainLooper())
 
+    private var onCompletionCallback: (() -> Unit)? = null
+
     override fun preparePlayer(previewUrl: String, onPrepared: () -> Unit) {
         try {
             mediaPlayer?.release()
@@ -19,11 +21,18 @@ class AudioPlayerRepositoryImpl : AudioPlayerRepository {
                 setOnPreparedListener {
                     mainHandler.post { onPrepared.invoke() }
                 }
+                setOnCompletionListener {
+                    mainHandler.post { onCompletionCallback?.invoke() }
+                }
                 prepareAsync()
             }
         } catch (e: IOException) {
             e.printStackTrace()
         }
+    }
+
+    override fun setOnCompletionListener(listener: () -> Unit) {
+        onCompletionCallback = listener
     }
 
     override fun play() {

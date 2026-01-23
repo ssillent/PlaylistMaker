@@ -16,6 +16,7 @@ lifecycle = "2.10.0"
 koin-android = "4.1.1"
 viewpager2 = "1.1.0"
 fragment = "1.8.9"
+nav = "2.9.6"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -36,6 +37,8 @@ activity-ktx = { module = "androidx.activity:activity-ktx", version.ref = "activ
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin-android" }
 androidx-viewpager2 = { module = "androidx.viewpager2:viewpager2", version.ref = "viewpager2" }
 androidx-fragment-ktx = { module = "androidx.fragment:fragment-ktx", version.ref = "fragment" }
+navigation-fragment-ktx = { module = "androidx.navigation:navigation-fragment-ktx", version.ref = "nav" }
+navigation-ui-ktx = { module = "androidx.navigation:navigation-ui-ktx", version.ref = "nav" }
 
 
 [plugins]
