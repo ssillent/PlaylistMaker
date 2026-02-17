@@ -3,21 +3,31 @@ package com.example.playlistmaker.data.network
 import android.content.Context
 import com.example.playlistmaker.data.dto.Response
 import com.example.playlistmaker.data.dto.TrackRequest
+import retrofit2.HttpException
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.io.IOException
 
 class RetrofitNetworkClient(private val songApiService: SongApiService) : NetworkClient{
 
 
-    override fun doRequest(dto: Any): Response {
-        if (dto is TrackRequest) {
-            val resp = songApiService.searchTrack(dto.expression).execute()
+    override suspend fun doRequest(dto: Any): Response {
+        return try {
 
-            val body = resp.body() ?: Response()
+            if (dto is TrackRequest) {
+                val response = songApiService.searchTrack(dto.expression)
 
-            return body.apply { resultCode = resp.code() }
-        } else {
-            return Response().apply { resultCode = 400 }
+                response.apply { resultCode = 200 }
+
+            } else {
+                Response().apply { resultCode = 400 }
+            }
+        } catch (e: IOException) {
+            Response().apply { resultCode = 500 }
+        } catch (e: HttpException) {
+            Response().apply { resultCode = e.code() }
+        } catch (e: Exception) {
+            Response().apply { resultCode = 500 }
         }
     }
 

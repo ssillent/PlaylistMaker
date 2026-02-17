@@ -85,6 +85,7 @@ class AudioPlayerViewModel(
     }
 
     private fun startProgressUpdates() {
+
         updateJob?.cancel()
         updateJob = viewModelScope.launch {
             while (isActive) {
@@ -97,9 +98,10 @@ class AudioPlayerViewModel(
                     break
                 }
 
-                delay(200L)
+                delay(300L)
             }
         }
+
     }
 
     private fun stopProgressUpdates() {

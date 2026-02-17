@@ -2,10 +2,11 @@ package com.example.playlistmaker.domain.search.Interactor
 
 import com.example.playlistmaker.domain.models.Track
 import com.example.playlistmaker.domain.search.model.SearchResult
+import kotlinx.coroutines.flow.Flow
 
 interface SearchInteractor {
 
-    suspend fun searchTracks(query: String): SearchResult
+    fun searchTracks(query: String): Flow<SearchResult>
 
     suspend fun getSearchHistory(): List<Track>
 

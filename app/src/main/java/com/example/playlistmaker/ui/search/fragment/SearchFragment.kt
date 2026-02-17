@@ -180,16 +180,17 @@ class SearchFragment : Fragment() {
 
     private fun onTrackClicked(track: Track) {
         hideKeyboard()
-        viewModel.addToHistory(track)
 
         val bundle = Bundle().apply {
             putSerializable("track", track)
         }
 
-        findNavController().navigate(
-            R.id.action_searchFragment_to_audioPlayerFragment,
-            bundle
-        )
+        viewModel.onTrackClickDebounce(track) {
+            findNavController().navigate(
+                R.id.action_searchFragment_to_audioPlayerFragment,
+                bundle
+            )
+        }
     }
 
 

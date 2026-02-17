@@ -11,6 +11,9 @@ import com.example.playlistmaker.domain.models.Track
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
 
 private const val HISTORY_KEY = "search_history"
@@ -24,16 +27,18 @@ class SearchRepositoryImpl(
 ): SearchRepository {
 
 
-    override suspend fun searchTracks(query: String): List<Track> =
-        withContext(Dispatchers.IO) {
-            val response = networkClient.doRequest(TrackRequest(query))
+    override fun searchTracks(query: String): Flow<List<Track>> = flow {
 
-            if (response.resultCode == 200) {
-                trackMapper.listDtoToDomain((response as TrackResponse).results)
-            } else {
-                emptyList()
-            }
+        val response = networkClient.doRequest(TrackRequest(query))
+
+        val tracks = if (response.resultCode == 200) {
+            trackMapper.listDtoToDomain((response as TrackResponse).results)
+        } else {
+            emptyList()
         }
+
+        emit(tracks)
+    }.flowOn(Dispatchers.IO)
 
     override suspend fun getSearchHistory(): List<Track> =
         withContext(Dispatchers.IO) {

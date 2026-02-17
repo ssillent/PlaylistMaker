@@ -10,6 +10,10 @@ import com.example.playlistmaker.domain.search.model.SearchResult
 
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 
 
@@ -17,6 +21,7 @@ class SearchViewModel(private val searchInteractor: SearchInteractor): ViewModel
 
     companion object {
         private const val SEARCH_DEBOUNCE_DELAY = 1000L
+        private const val CLICK_DEBOUNCE_DELAY = 500L
 
     }
 
@@ -26,6 +31,7 @@ class SearchViewModel(private val searchInteractor: SearchInteractor): ViewModel
 
     private var searchJob: Job? = null
     private var debounceJob: Job? = null
+    private var clickDebounceJob: Job? = null
     private var lastSearchQuery: String = ""
 
     fun searchDebounce(query: String) {
@@ -39,6 +45,20 @@ class SearchViewModel(private val searchInteractor: SearchInteractor): ViewModel
             search(query)
         }
     }
+
+    fun onTrackClickDebounce(track: Track, onNavigate: (Track) -> Unit) {
+
+        if (clickDebounceJob?.isActive == true) {
+            return
+        }
+
+        clickDebounceJob = viewModelScope.launch {
+            searchInteractor.addToHistory(track)
+            onNavigate(track)
+            delay(CLICK_DEBOUNCE_DELAY)
+        }
+    }
+
 
     fun searchWithoutDebounce(query: String) {
         debounceJob?.cancel()
@@ -66,11 +86,6 @@ class SearchViewModel(private val searchInteractor: SearchInteractor): ViewModel
         }
     }
 
-    fun addToHistory(track: Track) {
-        viewModelScope.launch {
-            searchInteractor.addToHistory(track)
-        }
-    }
 
     fun clearHistory() {
         viewModelScope.launch {
@@ -81,28 +96,31 @@ class SearchViewModel(private val searchInteractor: SearchInteractor): ViewModel
 
 
     private fun search(query: String) {
-        searchJob?.cancel()
-
         if (query.isBlank()) {
             loadSearchHistory()
             return
         }
 
-        searchJob = viewModelScope.launch {
-            _searchState.value = SearchState.Loading
+        searchJob?.cancel()
 
-            val buisnessResult = searchInteractor.searchTracks(query)
-
-            val uiState = when (buisnessResult) {
-                is SearchResult.Success -> SearchState.Content(buisnessResult.tracks)
-                SearchResult.Empty -> SearchState.Empty
-                SearchResult.Error -> SearchState.Error
+        searchJob = searchInteractor.searchTracks(query)
+            .onStart {
+                _searchState.value = SearchState.Loading
             }
-
-            _searchState.value = uiState
-        }
+            .onEach { result ->
+                val state = when (result) {
+                    is SearchResult.Success -> SearchState.Content(result.tracks)
+                    SearchResult.Empty -> SearchState.Empty
+                    SearchResult.Error -> SearchState.Error
+                }
+                _searchState.value = state
+            }
+            .catch { e ->
+                e.printStackTrace()
+                _searchState.value = SearchState.Error
+            }
+            .launchIn(viewModelScope)
     }
-
 }
 
 sealed class SearchState {
