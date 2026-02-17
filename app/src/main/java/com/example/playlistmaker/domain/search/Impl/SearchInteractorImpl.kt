@@ -5,41 +5,33 @@ import com.example.playlistmaker.domain.models.Track
 import com.example.playlistmaker.domain.search.Interactor.SearchInteractor
 import com.example.playlistmaker.domain.search.model.SearchResult
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
 class SearchInteractorImpl(private val repository: SearchRepository): SearchInteractor {
 
-    override suspend fun searchTracks(query: String): SearchResult =
-        withContext(Dispatchers.IO) {
-        try {
-            if (query.isBlank()) {
-                SearchResult.Empty
-            } else {
-                val tracks = repository.searchTracks(query)
+    override fun searchTracks(query: String): Flow<SearchResult> =
+        repository.searchTracks(query)
+            .map { tracks ->
                 if (tracks.isEmpty()) {
                     SearchResult.Empty
-                } else {
+                }else{
                     SearchResult.Success(tracks)
                 }
             }
-        } catch (e: Exception) {
-            SearchResult.Error
-        }
-    }
+            .catch { e ->
+                e.printStackTrace()
+                emit(SearchResult.Error)
+            }
+            .flowOn(Dispatchers.IO)
 
-    override suspend fun getSearchHistory(): List<Track> =
-        withContext(Dispatchers.IO) {
-            repository.getSearchHistory()
-        }
+    override suspend fun getSearchHistory(): List<Track> = repository.getSearchHistory()
 
-    override suspend fun addToHistory(track: Track) =
-        withContext(Dispatchers.IO) {
-            repository.addToHistory(track)
-        }
+    override suspend fun addToHistory(track: Track) = repository.addToHistory(track)
 
-    override suspend fun clearHistory() =
-        withContext(Dispatchers.IO) {
-            repository.clearHistory()
-        }
+    override suspend fun clearHistory() = repository.clearHistory()
 
 }
