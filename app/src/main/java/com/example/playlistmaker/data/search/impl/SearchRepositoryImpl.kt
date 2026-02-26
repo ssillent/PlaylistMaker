@@ -4,7 +4,8 @@ import android.content.SharedPreferences
 import androidx.core.content.edit
 import com.example.playlistmaker.data.dto.TrackRequest
 import com.example.playlistmaker.data.dto.TrackResponse
-import com.example.playlistmaker.data.mapper.TrackMapper
+import com.example.playlistmaker.data.convertor.TrackMapper
+import com.example.playlistmaker.data.db.AppDatabase
 import com.example.playlistmaker.data.network.NetworkClient
 import com.example.playlistmaker.domain.search.Repository.SearchRepository
 import com.example.playlistmaker.domain.models.Track
@@ -23,7 +24,8 @@ class SearchRepositoryImpl(
     private val networkClient: NetworkClient,
     private val trackMapper: TrackMapper,
     private val sharedPreferences: SharedPreferences,
-    private val gson: Gson
+    private val gson: Gson,
+    private val appDatabase: AppDatabase
 ): SearchRepository {
 
 
@@ -32,7 +34,8 @@ class SearchRepositoryImpl(
         val response = networkClient.doRequest(TrackRequest(query))
 
         val tracks = if (response.resultCode == 200) {
-            trackMapper.listDtoToDomain((response as TrackResponse).results)
+            val trackList = trackMapper.listDtoToDomain((response as TrackResponse).results)
+            markFavoriteTracks(trackList)
         } else {
             emptyList()
         }
@@ -44,12 +47,14 @@ class SearchRepositoryImpl(
         withContext(Dispatchers.IO) {
             val json = sharedPreferences.getString(HISTORY_KEY, null)
 
-            if (json != null) {
+           val historyTracks = if (json != null) {
                 val type = object : TypeToken<List<Track>>() {}.type
                 gson.fromJson<List<Track>>(json, type) ?: emptyList()
             } else {
                 emptyList()
             }
+
+            markFavoriteTracks(historyTracks)
     }
 
     override suspend fun addToHistory(track: Track) = withContext(Dispatchers.IO) {
@@ -77,6 +82,16 @@ class SearchRepositoryImpl(
         sharedPreferences.edit {
             putString(HISTORY_KEY, json)
             apply()
+        }
+    }
+
+    private suspend fun markFavoriteTracks(tracks: List<Track>): List<Track> {
+        if (tracks.isEmpty()) return tracks
+
+        val favoriteId = appDatabase.trackDao().getAllFavoriteTracksId()
+
+        return tracks.map { track ->
+            track.copy(isFavorite = track.trackId in favoriteId)
         }
     }
 

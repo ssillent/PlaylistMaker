@@ -43,6 +43,7 @@ class AudioPlayerFragment : Fragment() {
 
         val track = getTrackFromArguments()
         track?.let {
+            viewModel.setTrack(it)
             displayTrackData(it)
             viewModel.preparePlayer(it.previewUrl)
         }
@@ -64,6 +65,10 @@ class AudioPlayerFragment : Fragment() {
             findNavController().navigateUp()
         }
 
+        binding.LikeButton.setOnClickListener{
+            viewModel.onFavoriteClicked()
+        }
+
         binding.PlayButton.setOnClickListener {
             viewModel.onPlayButtonClicked()
         }
@@ -73,6 +78,15 @@ class AudioPlayerFragment : Fragment() {
         viewModel.state.observe(viewLifecycleOwner) { state ->
             updatePlayButton(state.playerState)
             binding.TrackTime.text = state.progressTime
+            updateLikeButton(state.isFavorite)
+        }
+    }
+
+    private fun updateLikeButton(isFavorite: Boolean) {
+        if (isFavorite) {
+            binding.LikeButton.setImageResource(R.drawable.liked_button)
+        } else {
+            binding.LikeButton.setImageResource(R.drawable.like_button)
         }
     }
 

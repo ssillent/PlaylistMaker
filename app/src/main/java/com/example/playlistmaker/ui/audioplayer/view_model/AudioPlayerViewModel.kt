@@ -6,6 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.domain.audioplayer.impl.AudioPlayerInteractorImpl
 import com.example.playlistmaker.domain.audioplayer.interactor.AudioPlayerInteractor
+import com.example.playlistmaker.domain.db.FavoriteTracksInteractor
+import com.example.playlistmaker.domain.models.Track
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.NonCancellable.isActive
 import kotlinx.coroutines.delay
@@ -22,19 +24,50 @@ enum class PlayerState {
 
 data class AudioPlayerState(
     val playerState: PlayerState = PlayerState.DEFAULT,
-    val progressTime: String = "00:00"
+    val progressTime: String = "00:00",
+    val isFavorite: Boolean = false
 )
 
 class AudioPlayerViewModel(
-    private val interactor: AudioPlayerInteractor
+    private val interactor: AudioPlayerInteractor,
+    private val favoritesInteractor: FavoriteTracksInteractor
 ) : ViewModel() {
 
+    companion object{
+        private const val PROGRESS_DELAY = 300L
+    }
 
     private val _state = MutableLiveData(AudioPlayerState())
     val state: LiveData<AudioPlayerState> = _state
 
 
     private var updateJob: Job? = null
+
+    private lateinit var currentTrack: Track
+
+    fun setTrack(track: Track) {
+        currentTrack = track
+        viewModelScope.launch {
+            val isFavorite = favoritesInteractor.isFavorite(track.trackId)
+            _state.value = _state.value?.copy(isFavorite = isFavorite)
+        }
+    }
+
+    fun onFavoriteClicked() {
+        viewModelScope.launch {
+            val currentIsFavorite = _state.value?.isFavorite ?: false
+
+            if (currentIsFavorite) {
+                favoritesInteractor.deleteFromFavorites(currentTrack)
+            } else {
+                favoritesInteractor.addToFavorites(currentTrack)
+            }
+
+            _state.value = _state.value?.copy(isFavorite = !currentIsFavorite)
+
+            currentTrack = currentTrack.copy(isFavorite = !currentIsFavorite)
+        }
+    }
 
     fun preparePlayer(previewUrl: String) {
         interactor.setOnPreparedListener {
@@ -98,7 +131,7 @@ class AudioPlayerViewModel(
                     break
                 }
 
-                delay(300L)
+                delay(PROGRESS_DELAY)
             }
         }
 
@@ -114,5 +147,6 @@ class AudioPlayerViewModel(
         interactor.releasePlayer()
     }
 
-
 }
+
+
