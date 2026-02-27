@@ -3,6 +3,8 @@ package com.example.playlistmaker.data.network
 import android.content.Context
 import com.example.playlistmaker.data.dto.Response
 import com.example.playlistmaker.data.dto.TrackRequest
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineExceptionHandler
 import retrofit2.HttpException
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -22,13 +24,16 @@ class RetrofitNetworkClient(private val songApiService: SongApiService) : Networ
             } else {
                 Response().apply { resultCode = 400 }
             }
+        }catch (e: CancellationException) {
+            throw e
         } catch (e: IOException) {
             Response().apply { resultCode = 500 }
-        } catch (e: HttpException) {
+        }catch (e: HttpException) {
             Response().apply { resultCode = e.code() }
-        } catch (e: Exception) {
+        }catch (e: Exception) {
             Response().apply { resultCode = 500 }
         }
+
     }
 
 }

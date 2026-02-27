@@ -2,14 +2,19 @@ package com.example.playlistmaker.di
 
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.room.Room
 import com.example.playlistmaker.data.audioplayer.impl.AudioPlayerRepositoryImpl
-import com.example.playlistmaker.data.mapper.TrackMapper
+import com.example.playlistmaker.data.convertor.TrackDbConvertor
+import com.example.playlistmaker.data.convertor.TrackMapper
+import com.example.playlistmaker.data.db.AppDatabase
+import com.example.playlistmaker.data.db.FavoriteTracksRepositoryImpl
 import com.example.playlistmaker.data.network.NetworkClient
 import com.example.playlistmaker.data.network.RetrofitNetworkClient
 import com.example.playlistmaker.data.network.SongApiService
 import com.example.playlistmaker.data.search.impl.SearchRepositoryImpl
 import com.example.playlistmaker.data.settings.impl.SettingsRepositoryImpl
 import com.example.playlistmaker.data.sharing.SharingDataProvider
+import com.example.playlistmaker.domain.db.FavoriteTracksRepository
 import com.example.playlistmaker.domain.sharing.model.StringLinks
 import com.example.playlistmaker.ui.sharing.ExternalNavigator
 import com.google.gson.Gson
@@ -45,6 +50,7 @@ val dataModule = module {
 
     factory { Gson() }
     factory { TrackMapper() }
+    factory { TrackDbConvertor() }
     single { ExternalNavigator(androidContext()) }
     single { SharingDataProvider(androidContext()) }
     single<StringLinks> {
@@ -55,18 +61,30 @@ val dataModule = module {
         AudioPlayerRepositoryImpl()
     }
 
+    single<FavoriteTracksRepository> {
+        FavoriteTracksRepositoryImpl(
+            appDatabase = get(),
+            trackDbConvertor = get()
+        )
+    }
 
     single<SearchRepositoryImpl> {
         SearchRepositoryImpl(
             networkClient = get(),
             trackMapper = get(),
             sharedPreferences = get(named("search_prefs")),
-            gson = get()
+            gson = get(),
+            appDatabase = get()
         )
     }
 
     single<SettingsRepositoryImpl> {
         SettingsRepositoryImpl(get(named("theme_prefs")))
+    }
+
+    single {
+        Room.databaseBuilder(androidContext(), AppDatabase::class.java, "database.db")
+            .build()
     }
 
 }
