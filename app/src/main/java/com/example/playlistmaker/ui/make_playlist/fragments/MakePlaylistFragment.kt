@@ -1,9 +1,11 @@
 package com.example.playlistmaker.ui.make_playlist.fragments
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
+import android.util.TypedValue
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -17,6 +19,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.CustomToastBinding
 import com.example.playlistmaker.databinding.MakePlaylistFragmentBinding
@@ -98,10 +101,13 @@ class MakePlaylistFragment : Fragment() {
             state.path?.let { path ->
                 val file = File(path)
                 if (file.exists()) {
+                    val pxSize = dpToPx(8f, requireContext())
+
                     Glide.with(this)
                         .load(file)
                         .placeholder(R.drawable.placeholder)
                         .centerCrop()
+                        .transform(RoundedCorners(pxSize))
                         .into(binding.choosePictureImage)
                 } else {
                     binding.choosePictureImage.setImageResource(R.drawable.placeholder)
@@ -182,6 +188,13 @@ class MakePlaylistFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun dpToPx(dp: Float, context: Context): Int {
+        return TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP,
+            dp,
+            context.resources.displayMetrics).toInt()
     }
 
 }

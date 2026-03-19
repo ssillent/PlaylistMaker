@@ -21,7 +21,7 @@ class AddToPlaylistViewHolder(private val binding: ViewAddtoplaylistBinding): Re
             playlist.tracksCount
         )
 
-        val cornerRaius = dpToPx(2f, itemView.context)
+        val cornerRaius = dpToPx(4f, itemView.context)
 
         if (!playlist.path.isNullOrEmpty()) {
             val file = File(playlist.path)

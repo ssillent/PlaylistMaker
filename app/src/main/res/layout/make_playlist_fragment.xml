@@ -26,22 +26,32 @@
         app:layout_constraintTop_toTopOf="@id/MakePlaylistBackButton"
         app:layout_constraintBottom_toBottomOf="@id/MakePlaylistBackButton" />
 
-    <ImageButton
-        android:id="@+id/choosePictureImage"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardview"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:scaleType="centerCrop"
         android:layout_marginTop="42dp"
         android:layout_marginStart="24dp"
-        android:padding="130dp"
         android:layout_marginEnd="24dp"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="0dp"
+        app:cardBackgroundColor="@android:color/transparent"
         app:layout_constraintDimensionRatio="1:1"
-        android:background="@drawable/choose_pictures"
-        android:src="@drawable/add_photo"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintWidth_max="500dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/MakePlaylistBackButton" />
+        app:layout_constraintTop_toBottomOf="@id/MakePlaylistBackButton"
+        app:layout_constraintWidth_max="500dp">
+
+        <ImageView
+            android:id="@+id/choosePictureImage"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/choose_pictures"
+            android:padding="130dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/add_photo" />
+
+    </androidx.cardview.widget.CardView>
 
     <EditText
         android:id="@+id/playlistNameEditText"
@@ -58,7 +68,7 @@
         android:maxLines="1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/choosePictureImage" />
+        app:layout_constraintTop_toBottomOf="@id/cardview" />
 
     <EditText
         android:id="@+id/playlistDescriptionEditText"
