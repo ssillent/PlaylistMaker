@@ -2,20 +2,26 @@ package com.example.playlistmaker.ui.audioplayer.fragment
 
 import android.os.Build
 import android.os.Bundle
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
+import com.example.playlistmaker.databinding.CustomToastBinding
 import com.example.playlistmaker.databinding.FragmentAudioplayerBinding
 import com.example.playlistmaker.domain.models.Track
+import com.example.playlistmaker.ui.audioplayer.AddToPlaylistAdapter
 import com.example.playlistmaker.ui.audioplayer.view_model.AudioPlayerViewModel
 import com.example.playlistmaker.ui.audioplayer.view_model.PlayerState
 import com.example.playlistmaker.ui.search.dpToPx
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class AudioPlayerFragment : Fragment() {
@@ -24,6 +30,9 @@ class AudioPlayerFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel by viewModel<AudioPlayerViewModel>()
+
+    private lateinit var bottomSheetBehavior: BottomSheetBehavior<*>
+    private lateinit var adapter: AddToPlaylistAdapter
 
 
     override fun onCreateView(
@@ -38,6 +47,8 @@ class AudioPlayerFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        setupBottomSheet()
+        setupRecyclerview()
         setupClickListeners()
         setupObservers()
 
@@ -47,6 +58,59 @@ class AudioPlayerFragment : Fragment() {
             displayTrackData(it)
             viewModel.preparePlayer(it.previewUrl)
         }
+    }
+
+    private fun setupBottomSheet() {
+        bottomSheetBehavior = BottomSheetBehavior.from(binding.bottomSheet).apply {
+            state = BottomSheetBehavior.STATE_HIDDEN
+            addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+                override fun onStateChanged(bottomSheet: View, newState: Int) {
+                    if (_binding == null) return
+
+                    when (newState) {
+                        BottomSheetBehavior.STATE_HIDDEN -> {
+                            binding.overlay.visibility = View.GONE
+                        }
+                        BottomSheetBehavior.STATE_COLLAPSED -> {
+                            binding.overlay.visibility = View.VISIBLE
+                            binding.overlay.alpha = 0.5f
+                            viewModel.loadPlaylists()
+                        }
+                        else -> {}
+                    }
+                }
+
+                override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                    if (_binding == null) return
+
+                    val alpha = when {
+                        slideOffset >= 0 -> {
+                            0.5f + (0.5f * slideOffset)
+                        }
+                        else -> {
+                            0.5f + (0.5f * slideOffset)
+                        }
+                    }
+
+                    if (alpha <= 0f) {
+                        binding.overlay.visibility = View.GONE
+                    } else {
+                        binding.overlay.visibility = View.VISIBLE
+                        binding.overlay.alpha = alpha
+                    }
+                }
+            })
+        }
+    }
+
+    private fun setupRecyclerview() {
+        adapter = AddToPlaylistAdapter { playlist ->
+            viewModel.onPlaylistSelected(playlist)
+        }
+
+        binding.bottomSheetRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+        binding.bottomSheetRecyclerView.adapter = adapter
+
     }
 
 
@@ -72,6 +136,19 @@ class AudioPlayerFragment : Fragment() {
         binding.PlayButton.setOnClickListener {
             viewModel.onPlayButtonClicked()
         }
+
+        binding.addButton.setOnClickListener{
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+        }
+
+        binding.bottomSheetButton.setOnClickListener {
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+            findNavController().navigate(R.id.action_audioPlayerFragment_to_makePlaylistFragment2)
+        }
+
+        binding.overlay.setOnClickListener{
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+        }
     }
 
     private fun setupObservers() {
@@ -79,6 +156,37 @@ class AudioPlayerFragment : Fragment() {
             updatePlayButton(state.playerState)
             binding.TrackTime.text = state.progressTime
             updateLikeButton(state.isFavorite)
+
+            state.playlists?.let { playlists ->
+                adapter.updatePlaylists(playlists)
+            }
+
+            state.toastMessageResId?.let { resId ->
+                val message = if (state.toastArg != null) {
+                    getString(resId, state.toastArg)
+                } else{
+                    getString(resId)
+                }
+                showCustomToast(message)
+                viewModel.clearToast()
+            }
+
+            if (state.shouldCloseBottomSheet) {
+                bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+                viewModel.onBottomSheetClosed()
+            }
+        }
+    }
+
+    private fun showCustomToast(message: String) {
+        val toastBinding = CustomToastBinding.inflate(layoutInflater, binding.root, false)
+        toastBinding.toastText.text = message
+
+        Toast(requireContext()).apply {
+            duration = Toast.LENGTH_SHORT
+            setGravity(Gravity.BOTTOM or Gravity.FILL_HORIZONTAL, 0, 16)
+            view = toastBinding.root
+            show()
         }
     }
 
