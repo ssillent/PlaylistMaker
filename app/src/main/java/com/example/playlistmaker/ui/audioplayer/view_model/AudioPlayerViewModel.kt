@@ -4,9 +4,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.playlistmaker.R
 import com.example.playlistmaker.domain.audioplayer.impl.AudioPlayerInteractorImpl
 import com.example.playlistmaker.domain.audioplayer.interactor.AudioPlayerInteractor
 import com.example.playlistmaker.domain.db.FavoriteTracksInteractor
+import com.example.playlistmaker.domain.make_playlist.interactor.MakePlaylistInteractor
+import com.example.playlistmaker.domain.models.Playlist
 import com.example.playlistmaker.domain.models.Track
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.NonCancellable.isActive
@@ -25,12 +28,17 @@ enum class PlayerState {
 data class AudioPlayerState(
     val playerState: PlayerState = PlayerState.DEFAULT,
     val progressTime: String = "00:00",
-    val isFavorite: Boolean = false
+    val isFavorite: Boolean = false,
+    val playlists: List<Playlist>? = null,
+    val toastMessageResId: Int? = null,
+    val toastArg: String? = null,
+    val shouldCloseBottomSheet: Boolean = false
 )
 
 class AudioPlayerViewModel(
     private val interactor: AudioPlayerInteractor,
-    private val favoritesInteractor: FavoriteTracksInteractor
+    private val favoritesInteractor: FavoriteTracksInteractor,
+    private val makePlaylistInteractor: MakePlaylistInteractor
 ) : ViewModel() {
 
     companion object{
@@ -51,6 +59,50 @@ class AudioPlayerViewModel(
             val isFavorite = favoritesInteractor.isFavorite(track.trackId)
             _state.value = _state.value?.copy(isFavorite = isFavorite)
         }
+    }
+
+    fun loadPlaylists(){
+        viewModelScope.launch {
+            makePlaylistInteractor.getAllPlaylists()
+                .collect { playlists ->
+                    _state.value = _state.value?.copy(playlists = playlists)
+                }
+        }
+    }
+
+    fun onPlaylistSelected(playlist: Playlist) {
+        viewModelScope.launch {
+            val isInPlaylist = makePlaylistInteractor.isTrackInPlaylist(
+                playlist.playlistId,
+                currentTrack.trackId
+            )
+
+            if (isInPlaylist) {
+                _state.value = _state.value?.copy(
+                    toastMessageResId = R.string.already_added,
+                    toastArg = playlist.playlistName,
+                    shouldCloseBottomSheet = false
+                )
+            } else {
+                makePlaylistInteractor.addTrackToPlaylist(playlist, currentTrack)
+                _state.value = _state.value?.copy(
+                    toastMessageResId = R.string.successful_added,
+                    toastArg = playlist.playlistName,
+                    shouldCloseBottomSheet = true
+                )
+            }
+        }
+    }
+
+    fun clearToast() {
+        _state.value = _state.value?.copy(
+            toastArg = null,
+            toastMessageResId = null
+        )
+    }
+
+    fun onBottomSheetClosed() {
+        _state.value = _state.value.copy(shouldCloseBottomSheet = false)
     }
 
     fun onFavoriteClicked() {

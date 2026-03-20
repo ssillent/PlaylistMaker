@@ -1,5 +1,6 @@
 package com.example.playlistmaker.data.convertor
 
+import com.example.playlistmaker.data.db.PlaylistTrackEntity
 import com.example.playlistmaker.data.db.TrackEntity
 import com.example.playlistmaker.domain.models.Track
 
@@ -36,6 +37,23 @@ class TrackDbConvertor {
             primaryGenreName = trackEntity.primaryGenreName,
             country = trackEntity.country,
             previewUrl = trackEntity.previewUrl
+        )
+    }
+
+    fun mapToTrackForPlaylistEntity(track: Track): PlaylistTrackEntity {
+        return PlaylistTrackEntity(
+            trackId = track.trackId,
+            trackName = track.trackName,
+            artistName = track.artistName,
+            trackTimeMillis = track.trackTimeMillis,
+            artworkUrl100 = track.artworkUrl100,
+            artworkUrl512 = track.artworkUrl512,
+            collectionName = track.collectionName,
+            releaseDate = track.releaseDate,
+            primaryGenreName = track.primaryGenreName,
+            country = track.country,
+            previewUrl = track.previewUrl,
+            addedTimestamp = System.currentTimeMillis()
         )
     }
 }

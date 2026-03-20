@@ -8,6 +8,8 @@ import com.example.playlistmaker.domain.audioplayer.interactor.AudioPlayerIntera
 import com.example.playlistmaker.domain.audioplayer.repository.AudioPlayerRepository
 import com.example.playlistmaker.domain.db.FavoriteTrackInteractorImpl
 import com.example.playlistmaker.domain.db.FavoriteTracksInteractor
+import com.example.playlistmaker.domain.make_playlist.impl.MakePlaylistInteractorImpl
+import com.example.playlistmaker.domain.make_playlist.interactor.MakePlaylistInteractor
 import com.example.playlistmaker.domain.search.Impl.SearchInteractorImpl
 import com.example.playlistmaker.domain.search.Interactor.SearchInteractor
 import com.example.playlistmaker.domain.search.Repository.SearchRepository
@@ -38,6 +40,9 @@ val domainModule = module {
 
     factory<FavoriteTracksInteractor> {
         FavoriteTrackInteractorImpl(get())
+    }
+    factory <MakePlaylistInteractor> {
+        MakePlaylistInteractorImpl(get())
     }
 
     single<AudioPlayerRepository> { get<AudioPlayerRepositoryImpl>() }

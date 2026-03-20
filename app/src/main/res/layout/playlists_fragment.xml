@@ -1,28 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     style="@style/ChangeColor">
 
     <Button
-        android:id="@+id/updateButton"
+        android:id="@+id/createButton"
         style="@style/UpdateButton"
         android:text="@string/NewPlaylist"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="24dp"
         />
 
+    <LinearLayout
+        android:id="@+id/placeholderLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="106dp"
+        android:orientation="vertical"
+        android:layout_gravity="center_horizontal"
+        android:visibility="gone">
     <ImageView
         style="@style/PlaceholderIc"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="106dp"/>
+        android:layout_gravity="center_horizontal" />
     <TextView
         style="@style/SearchPlaceholderText"
         android:text="@string/emptyPlaylist"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="242dp"
         />
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/playlistFragmentRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="86dp"
+        android:paddingHorizontal="12dp"
+        android:clipToPadding="false" />
 
 </FrameLayout>
