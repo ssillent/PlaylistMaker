@@ -5,10 +5,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.R
-import com.example.playlistmaker.domain.audioplayer.impl.AudioPlayerInteractorImpl
 import com.example.playlistmaker.domain.audioplayer.interactor.AudioPlayerInteractor
 import com.example.playlistmaker.domain.db.FavoriteTracksInteractor
-import com.example.playlistmaker.domain.make_playlist.interactor.MakePlaylistInteractor
+import com.example.playlistmaker.domain.make_playlist.interactor.PlaylistInteractor
 import com.example.playlistmaker.domain.models.Playlist
 import com.example.playlistmaker.domain.models.Track
 import kotlinx.coroutines.Job
@@ -38,7 +37,7 @@ data class AudioPlayerState(
 class AudioPlayerViewModel(
     private val interactor: AudioPlayerInteractor,
     private val favoritesInteractor: FavoriteTracksInteractor,
-    private val makePlaylistInteractor: MakePlaylistInteractor
+    private val makePlaylistInteractor: PlaylistInteractor
 ) : ViewModel() {
 
     companion object{

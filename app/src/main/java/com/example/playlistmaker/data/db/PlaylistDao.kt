@@ -22,4 +22,7 @@ interface PlaylistDao {
     @Query("SELECT * FROM playlist_table ORDER BY playlistId DESC")
     fun getAllPlaylists(): Flow<List<PlaylistEntity>>
 
+    @Query("DELETE FROM playlist_table WHERE playlistId = :playlistId")
+    suspend fun deletePlaylist(playlistId: Int)
+
 }

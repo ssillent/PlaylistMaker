@@ -9,7 +9,7 @@ import com.example.playlistmaker.data.convertor.TrackDbConvertor
 import com.example.playlistmaker.data.convertor.TrackMapper
 import com.example.playlistmaker.data.db.AppDatabase
 import com.example.playlistmaker.data.db.FavoriteTracksRepositoryImpl
-import com.example.playlistmaker.data.make_playlist.repositoryImpl.MakePlaylistRepositoryImpl
+import com.example.playlistmaker.data.make_playlist.repositoryImpl.PlaylistRepositoryImpl
 import com.example.playlistmaker.data.network.NetworkClient
 import com.example.playlistmaker.data.network.RetrofitNetworkClient
 import com.example.playlistmaker.data.network.SongApiService
@@ -17,7 +17,7 @@ import com.example.playlistmaker.data.search.impl.SearchRepositoryImpl
 import com.example.playlistmaker.data.settings.impl.SettingsRepositoryImpl
 import com.example.playlistmaker.data.sharing.SharingDataProvider
 import com.example.playlistmaker.domain.db.FavoriteTracksRepository
-import com.example.playlistmaker.domain.make_playlist.repository.MakePlaylistRepository
+import com.example.playlistmaker.domain.make_playlist.repository.PlaylistRepository
 import com.example.playlistmaker.domain.sharing.model.StringLinks
 import com.example.playlistmaker.ui.sharing.ExternalNavigator
 import com.google.gson.Gson
@@ -65,8 +65,8 @@ val dataModule = module {
         AudioPlayerRepositoryImpl()
     }
 
-    single<MakePlaylistRepository> {
-        MakePlaylistRepositoryImpl(get(), get(), get())
+    single<PlaylistRepository> {
+        PlaylistRepositoryImpl(get(), get(), get())
     }
 
     single<FavoriteTracksRepository> {

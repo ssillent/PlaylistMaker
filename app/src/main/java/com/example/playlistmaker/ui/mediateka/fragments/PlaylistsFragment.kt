@@ -50,7 +50,10 @@ class PlaylistsFragment : Fragment() {
         binding.playlistFragmentRecyclerView.setHasFixedSize(true)
 
         adapter = PlaylistAdapter { playlist ->
-
+            val bundle = Bundle().apply {
+                putInt("playlist_id", playlist.playlistId)
+            }
+            findNavController().navigate(R.id.action_mediatekaFragment_to_mainPlaylistFragment, bundle)
         }
 
         binding.playlistFragmentRecyclerView.adapter = adapter
