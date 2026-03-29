@@ -8,6 +8,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ViewAddtoplaylistBinding
 import com.example.playlistmaker.domain.models.Playlist
+import com.example.playlistmaker.utils.formatTracks
 import java.io.File
 
 class AddToPlaylistViewHolder(private val binding: ViewAddtoplaylistBinding): RecyclerView.ViewHolder(binding.root){
@@ -15,11 +16,7 @@ class AddToPlaylistViewHolder(private val binding: ViewAddtoplaylistBinding): Re
     fun bind(playlist: Playlist) {
         binding.playlistName.text = playlist.playlistName
 
-        binding.trackCount.text = itemView.resources.getQuantityString(
-            R.plurals.tracks_count,
-            playlist.tracksCount,
-            playlist.tracksCount
-        )
+        binding.trackCount.text = playlist.tracksCount.formatTracks()
 
         val cornerRaius = dpToPx(4f, itemView.context)
 

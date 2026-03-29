@@ -3,14 +3,16 @@ package com.example.playlistmaker.data.make_playlist.repositoryImpl
 import com.example.playlistmaker.data.convertor.PlaylistDbConvertor
 import com.example.playlistmaker.data.convertor.TrackDbConvertor
 import com.example.playlistmaker.data.db.AppDatabase
-import com.example.playlistmaker.domain.make_playlist.repository.MakePlaylistRepository
+import com.example.playlistmaker.domain.make_playlist.repository.PlaylistRepository
 import com.example.playlistmaker.domain.models.Playlist
 import com.example.playlistmaker.domain.models.Track
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 
-class MakePlaylistRepositoryImpl(private val appDatabase: AppDatabase, private val playlistDbConvertor: PlaylistDbConvertor, private val trackDbConvertor: TrackDbConvertor) :
-    MakePlaylistRepository {
+class PlaylistRepositoryImpl(private val appDatabase: AppDatabase, private val playlistDbConvertor: PlaylistDbConvertor, private val trackDbConvertor: TrackDbConvertor) :
+    PlaylistRepository {
 
     override suspend fun createPlaylist(playlist: Playlist) {
         val entity = playlistDbConvertor.map(playlist)
@@ -54,5 +56,44 @@ class MakePlaylistRepositoryImpl(private val appDatabase: AppDatabase, private v
     override suspend fun isTrackInPlaylist(playlistId: Int, trackId: Long): Boolean {
         val playlist = getPlaylistById(playlistId) ?: return false
         return playlist.tracksID.contains(trackId.toInt())
+    }
+
+    override fun getTracksByIds(trackIds: List<Long>): Flow<List<Track>> {
+        if (trackIds.isEmpty()) {
+            return flowOf(emptyList())
+        }
+
+        return appDatabase.playlistTrackDao()
+            .getTracksByIds(trackIds)
+            .map { entities ->
+                entities.map { entity ->
+                    trackDbConvertor.mapFromPlaylistTrackEntity(entity)
+                }
+
+            }
+    }
+
+    override suspend fun cleanUnusedTrack(trackId: Long) {
+        val allPlaylists = getAllPlaylists().first()
+
+        val isTrackUsed = allPlaylists.any{ playlist ->
+            playlist.tracksID.contains(trackId.toInt())
+        }
+
+        if(!isTrackUsed) {
+            appDatabase.playlistTrackDao().deleteTrack(trackId)
+        }
+    }
+
+    override suspend fun deletePlaylist(playlistId: Int) {
+        val playlist = getPlaylistById(playlistId)
+        appDatabase.playlistDao().deletePlaylist(playlistId)
+
+        playlist?.let {
+            val trackIds = it.tracksID.map { id -> id.toLong() }
+            trackIds.forEach { trackId ->
+                cleanUnusedTrack(trackId)
+            }
+        }
     }
 }

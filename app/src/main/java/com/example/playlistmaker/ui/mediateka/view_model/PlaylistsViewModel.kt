@@ -4,11 +4,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.playlistmaker.domain.make_playlist.interactor.MakePlaylistInteractor
+import com.example.playlistmaker.domain.make_playlist.interactor.PlaylistInteractor
 import com.example.playlistmaker.domain.models.Playlist
 import kotlinx.coroutines.launch
 
-class PlaylistsViewModel(private val makePlaylistInteractor: MakePlaylistInteractor) : ViewModel() {
+class PlaylistsViewModel(private val makePlaylistInteractor: PlaylistInteractor) : ViewModel() {
 
     private val _playlists = MutableLiveData<List<Playlist>>()
     val playlists: LiveData<List<Playlist>> = _playlists

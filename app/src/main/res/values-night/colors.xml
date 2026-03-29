@@ -5,4 +5,5 @@
     <color name="BackGroundColorBottomNavigation">#1A1B22</color>
     <color name="Background">#1A1B22</color>
     <color name="Background_toast">#FFFFFFFF</color>
+    <color name="drag_handle">#FFFFFFFF</color>
 </resources>

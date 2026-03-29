@@ -15,7 +15,6 @@ import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AlertDialog
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
@@ -23,7 +22,9 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.CustomToastBinding
 import com.example.playlistmaker.databinding.MakePlaylistFragmentBinding
+import com.example.playlistmaker.ui.make_playlist.view_model.MakePlaylistState
 import com.example.playlistmaker.ui.make_playlist.view_model.MakePlaylistViewModel
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
 import java.io.FileOutputStream
@@ -31,12 +32,12 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-class MakePlaylistFragment : Fragment() {
+open class MakePlaylistFragment : Fragment() {
 
-    private var _binding: MakePlaylistFragmentBinding? = null
-    private val binding get() = _binding!!
+    protected var _binding: MakePlaylistFragmentBinding? = null
+    protected val binding get() = _binding!!
 
-    private val viewModel: MakePlaylistViewModel by viewModel()
+    protected open val viewModel: MakePlaylistViewModel by viewModel()
 
     private val pickMedia = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
         uri?.let {
@@ -90,49 +91,52 @@ class MakePlaylistFragment : Fragment() {
         }
     }
 
-    private fun setupObservers() {
+    protected open fun setupObservers() {
         viewModel.state.observe(viewLifecycleOwner) { state ->
-            binding.createPlaylistButton.isEnabled = state.isNameValid && !state.isSaving
-
-            if (state.showExitDialog) {
-                showExitDialog()
-            }
-
-            state.path?.let { path ->
-                val file = File(path)
-                if (file.exists()) {
-                    val pxSize = dpToPx(8f, requireContext())
-
-                    Glide.with(this)
-                        .load(file)
-                        .placeholder(R.drawable.placeholder)
-                        .centerCrop()
-                        .transform(RoundedCorners(pxSize))
-                        .into(binding.choosePictureImage)
-                } else {
-                    binding.choosePictureImage.setImageResource(R.drawable.placeholder)
-                }
-            }
-
-            state.toastMessageResId?.let { resId ->
-                val message = if (state.toastArg != null) {
-                    getString(resId, state.toastArg)
-                } else {
-                    getString(resId)
-                }
-                showCustomToast(message)
-                viewModel.clearToast()
-            }
-
-            if (state.shouldNavigateBack) {
-                parentFragmentManager.popBackStack()
-                viewModel.onNavigationComplete()
-            }
-
+            updateUIState(state)
         }
     }
 
-    private fun saveImageToPrivateStorage(uri: Uri): String? {
+    protected open fun updateUIState(state: MakePlaylistState) {
+        binding.createPlaylistButton.isEnabled = state.isNameValid && !state.isSaving
+
+        if (state.showExitDialog) {
+            showExitDialog()
+        }
+
+        state.path?.let { path ->
+            val file = File(path)
+            if (file.exists()) {
+                val pxSize = dpToPx(8f, requireContext())
+
+                Glide.with(this)
+                    .load(file)
+                    .placeholder(R.drawable.placeholder)
+                    .centerCrop()
+                    .transform(RoundedCorners(pxSize))
+                    .into(binding.choosePictureImage)
+            } else {
+                binding.choosePictureImage.setImageResource(R.drawable.placeholder)
+            }
+        }
+
+        state.toastMessageResId?.let { resId ->
+            val message = if (state.toastArg != null) {
+                getString(resId, state.toastArg)
+            } else {
+                getString(resId)
+            }
+            showCustomToast(message)
+            viewModel.clearToast()
+        }
+
+        if (state.shouldNavigateBack) {
+            parentFragmentManager.popBackStack()
+            viewModel.onNavigationComplete()
+        }
+    }
+
+    protected fun saveImageToPrivateStorage(uri: Uri): String? {
         return try {
             val filePath = File(requireActivity().filesDir, "playlist_image")
             if (!filePath.exists()) {
@@ -160,14 +164,16 @@ class MakePlaylistFragment : Fragment() {
     }
 
     private fun showExitDialog() {
-        AlertDialog.Builder(requireContext())
+        MaterialAlertDialogBuilder(requireContext())
             .setTitle(R.string.end_create)
             .setMessage(R.string.lost_data)
-            .setPositiveButton(R.string.end) { _, _ ->
+            .setPositiveButton(R.string.end) { dialog, _ ->
                 viewModel.onExitConfirmed()
+                dialog.dismiss()
             }
-            .setNegativeButton(R.string.cancel) { _, _ ->
+            .setNegativeButton(R.string.cancel) { dialog, _ ->
                 viewModel.onExitCancelled()
+                dialog.dismiss()
             }
             .show()
     }
@@ -190,7 +196,7 @@ class MakePlaylistFragment : Fragment() {
         _binding = null
     }
 
-    private fun dpToPx(dp: Float, context: Context): Int {
+    protected fun dpToPx(dp: Float, context: Context): Int {
         return TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_DIP,
             dp,

@@ -6,14 +6,14 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.R
-import com.example.playlistmaker.domain.make_playlist.interactor.MakePlaylistInteractor
+import com.example.playlistmaker.domain.make_playlist.interactor.PlaylistInteractor
 import com.example.playlistmaker.domain.models.Playlist
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class MakePlaylistViewModel(private val interactor: MakePlaylistInteractor) : ViewModel() {
+open class MakePlaylistViewModel(protected val interactor: PlaylistInteractor) : ViewModel() {
 
-    private val _state = MutableLiveData(MakePlaylistState())
+    protected val _state = MutableLiveData(MakePlaylistState())
     val state: LiveData<MakePlaylistState> = _state
 
     fun onNameChanged(name: String) {
@@ -34,7 +34,7 @@ class MakePlaylistViewModel(private val interactor: MakePlaylistInteractor) : Vi
         )
     }
 
-    fun onBackPressed() {
+    open fun onBackPressed() {
         val currentState = _state.value
         if (hasUnsavedData(currentState)) {
             _state.value = currentState?.copy(showExitDialog = true)
@@ -54,7 +54,7 @@ class MakePlaylistViewModel(private val interactor: MakePlaylistInteractor) : Vi
         _state.value = _state.value?.copy(showExitDialog = false)
     }
 
-    fun onCreatePlaylist() {
+    open fun onCreatePlaylist() {
         val currentState = _state.value ?: return
         if (!currentState.isNameValid) return
 
